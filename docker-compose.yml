@@ -1,8 +1,25 @@
-elasticsearch:
- image: elasticsearch
- ports:
-   - "9200:9200"
-redis:
- image : redis:2.8.21
- ports:
-   - "6379:6379"
+version: '2'
+
+services:
+#  cfp:
+#    build: .
+#    ports: ["80"]
+#    networks: ["private"]
+#    depends_on: ["elasticsearch","redis"]
+#    depends_on: ["redis"]
+#    volumes:
+#      - ~/.ivy2:/root/.ivy2
+#      - ~/.sbt:/root/.sbt
+  elasticsearch:
+   image: elasticsearch:1.7.0
+   ports: ["9200:59200"]
+#   networks: ["private"]
+   volumes:
+      - ./stores/elasticsearch/data:/usr/share/elasticsearch/data
+      - ./stores/elasticsearch/config:/usr/share/elasticsearch/config
+  redis:
+   image : redis:2.8.21
+   ports: ["6379:56379"]
+   volumes:
+     - ./stores/redis:/var/lib/redis
+#   networks: ["private"]
