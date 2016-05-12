@@ -129,7 +129,7 @@ object ConferenceDescriptor {
 
     val OTHER = ProposalType(id = "other", label = "other.label")
 
-    val ALL = List(CONF, UNI, TIA, LAB, QUICK, BOF, KEY, IGNITE, OTHER)
+    val ALL = List(CONF, TIA, LAB, QUICK,KEY, OTHER)
 
     def valueOf(id: String): ProposalType = id match {
       case "conf" => CONF
