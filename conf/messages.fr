@@ -7,10 +7,10 @@ password=Code d''accès
 CallForPaper=Appel aux conférenciers
 btn.login=Continuer
 menu.register=S''inscrire
-menu.blog=Site DevoxxFR
+menu.blog=Site ScalaIOFR
 login=S''authentifier
 signup=S''inscrire
-signup.long=S''inscrire en tant qu''orateur pour Devoxx France
+signup.long=S''inscrire en tant qu''orateur pour ScalaIO France
  
 index.method1=S''authentifier
 # For single quote, you need to double escape
@@ -19,7 +19,7 @@ index.welcome=Déjà inscrit ? Authentifiez-vous avec votre code d''accès :
  
 index.method2=Authentifiez-vous avec OpenId
 index.signupTitle=S''inscrire comme orateur
-index.signup2=Inscrivez-vous comme orateur à Devoxx France afin de proposer un ou plusieurs sujets :
+index.signup2=Inscrivez-vous comme orateur à ScalaIO France afin de proposer un ou plusieurs sujets :
 index.signup3=Inscrivez-vous via l''un de vos réseaux sociaux, en quelques secondes, sans devoir valider votre email et utiliser un code d''accès :
 index.signup.btn=S''inscrire
 index.txt2=Utilisez l''un des services ci-dessous, afin de ne pas avoir à mémoriser un code d''accès. Si votre profil n''existe pas, il sera automatiquement créé.
@@ -63,7 +63,7 @@ error.pattern=Doit respecter {0}
 email.alreadyexists=Cette adresse email est déjà enregistrée dans notre base.
 forget.password.confirm=Un courrier électronique a été envoyé à l''adresse spécifiée.
 register.withopenid=Inscrivez-vous avec votre profil social
-cfp.closed=Le CFP de Devoxx France est fermé.
+cfp.closed=Le CFP de ScalaIO France est fermé.
 avatarUrl=URL de votre photo
  
 # CFP Home page
@@ -96,10 +96,10 @@ title.help=Proposez un titre simple, clair, qui résume ce que le participant va
 summary=Résumé de votre présentation pour le participant
 summary.help=Décrivez votre proposition, telle que le conférencier la lira. Vous pouvez utiliser la syntaxe <a href="http://daringfireball.net/projects/markdown/syntax/" target="_blank">Markdown</a>.
 lang=Langue
-lang.help=75% des présentations à Devoxx France doivent être en Français, 25% en Anglais. Si vous êtes francophone, merci de présenter en Français.
+lang.help=Si vous êtes francophone, merci de présenter en Français.
 mainSpeaker=Présentateur principal
-mainSpeaker.help=Vous avez la possibilité d''ajouter d''autres présentateurs une fois que la proposition est créé. Nous offrons une entrée 3 jours à Devoxx France uniquement pour les formats de présentation suivants : Conference, University, Hands-on-Labs et Tools-in-Action.
-talkType.help=Chaque type de conférence est détaillé sur la page <a href="http://www.devoxx.fr/faq" target="new">FAQ</a> du site Devoxx France.
+mainSpeaker.help=Vous avez la possibilité d''ajouter d''autres présentateurs une fois que la proposition est créé. Nous offrons une entrée à ScalaIO France pour les speakers.
+talkType.help=Chaque type de conférence est détaillé sur la page <a href="http://scala.io/faq.html" target="new">FAQ</a> du site ScalaIO France.
  
  
 talkType=Type de présentation
@@ -116,7 +116,7 @@ moreSpeakerLater=Vous aurez la possibilité d''ajouter un ou plusieurs speakers 
 btn.save=Sauver l''édition
 btn.home=Retour à l''accueil sans sauver
 btn.save2=Sauvegarder votre proposition
-not.saved=Vérifiez le résumé à destination du participant à Devoxx France, puis cliquez sur "Sauvegarder la proposition" pour continuer.
+not.saved=Vérifiez le résumé à destination du participant à ScalaIO France, puis cliquez sur "Sauvegarder la proposition" pour continuer.
 validate.summary2=ou sinon utilisez
 validate.summary3=Retour à la page précédente
 validate.summary4=de votre navigateur pour corriger votre texte de résumé.
@@ -146,12 +146,12 @@ msg=Votre message
  
 # Home
 appel.conf=Appel aux conférenciers
-appel.conf.dates=Call for Paper, Devoxx France 2016, 20 au 22 avril 2016
+appel.conf.dates=Call for Paper, ScalaIO France 2016, 27 et 28 octobre 2016
 cfp.opening=Ouverture du CFP
 cfp.closing=Fermeture du CFP
 cfp.closing.date=pensez à accepter ou décliner les sujets approuvés par le comité.
 cfp.program=Annonce du programme :
-cfp.program.date=à partir de la mi-février 2016
+cfp.program.date=à partir de la mi-mai 2016
 video.title=Vidéos de l''édition 2015
 video.tag=Retrouvez les sessions de l''édition 2015 sur le site
 theme.title=Thèmes
@@ -206,7 +206,7 @@ lang.label=Langages alternatifs
 lang.leaderboard=Langages alternatifs
 
 # Confirm import
-confirm.import.title=Créer votre profil de présentateur Devoxx France
+confirm.import.title=Créer votre profil de présentateur ScalaIO France
 confirm.import.save=Enregistrer et continuer
 avatarUrl.isEmpty=L''URL de votre photo est vide, nous utiliserons votre
 avatarUrl.defined=Votre photo (largeur recommandée 120px)
@@ -215,11 +215,11 @@ avatarUrl.defined=Votre photo (largeur recommandée 120px)
 created.title=Demande d''inscription enregistrée
 created.text1=Nous allons vous envoyer un courrier électronique de validation dans quelques minutes.
 created.text2=Validez votre adresse pour terminer votre enregistrement, votre code d''accès vous sera donné lorsque vous validerez votre email.
-created.text3=Vous pourrez alors vous authentifier et commencer à proposer vos sujets pour Devoxx France.
+created.text3=Vous pourrez alors vous authentifier et commencer à proposer vos sujets pour ScalaIO France.
  
 # Prepare signup
 signup.title=Inscription orateur
-signup.txt1=Inscrivez-vous pour proposer vos sujets de présentation pour la conférence Devoxx France 2016 :
+signup.txt1=Inscrivez-vous pour proposer vos sujets de présentation pour la conférence ScalaIO France 2016 :
 signup.txt2=Un email de validation est envoyé à l''adresse indiquée. Votre profil ne sera actif une fois que votre adresse de courrier électronique sera validée.
  
 # edit profile
@@ -299,7 +299,7 @@ nav.homeSpeaker=Accueil
 editWebuser.title=Votre profil
  
 cfp.isOpen=Le CFP est ouvert
-cfp.open.enter=Proposer un sujet pour Devoxx France
+cfp.open.enter=Proposer un sujet pour ScalaIO France
  
 #CFP admin
 admin.proposals.th.title=Titre
@@ -382,10 +382,10 @@ comment.proposal=Fil de discussion
 saved1=Proposition enregistrée. Pensez à soumettre le sujet en cliquant sur l''enveloppe orange !
 saved2=Proposition éditée et enregistrée.
  
-approve.title=Devoxx France, Termes et Conditions du Présentateur
-accept.chk=J''accepte les conditions de Devoxx France
-acceptTerm.pleaseRead=Merci de prendre le temps de lire et d''accepter les termes et conditions pour présenter à Devoxx France :
-accept.term.checked=Merci de cocher cette case si vous acceptez les conditions de Devoxx France
+approve.title=ScalaIO France, Termes et Conditions du Présentateur
+accept.chk=J''accepte les conditions de ScalaIO France
+acceptTerm.pleaseRead=Merci de prendre le temps de lire et d''accepter les termes et conditions pour présenter à ScalaIO France :
+accept.term.checked=Merci de cocher cette case si vous acceptez les conditions de ScalaIO France
  
 acceptedProposals.title=Liste de vos soumissions approuvées/refusées
 ar.approved=Soumissions approuvées
@@ -481,9 +481,9 @@ sw.agenda.fri=Vendredi
 sw.show.wed=Mercredi
 sw.show.thu=Jeudi
 sw.show.fri=Vendredi
-sw.show.title.wed=Journée du Mercredi 20 avril 2016
-sw.show.title.thu=Journée du Jeudi 21 avril 2016
-sw.show.title.fri=Journée du Vendredi 22 avril 2016
+sw.show.title.wed=Journée du Mercredi 2 octobre 2016
+sw.show.title.thu=Journée du Jeudi 27 octobre 2016
+sw.show.title.fri=Journée du Vendredi 28 octobre 2016
  
  
 sw.horaires=Horaires
@@ -498,7 +498,7 @@ not.published=L''agenda pour ce type de conférence n''est pas encore publié.
 day-thu=Jeudi
 day-fri=Vendredi
 day-wed=Mercredi
-acceptedTerms.msg=Vous avez accepté les Termes et Conditions de Devoxx, merci !
+acceptedTerms.msg=Vous avez accepté les Termes et Conditions de ScalaIO, merci !
  
 antispam=Pour prouver que vous n''êtes pas un robot mais un humain, combien font 38+4 ?
 bugReport.sent=Votre message a été envoyé à l''équipe, merci !
@@ -522,11 +522,11 @@ btn.saveAndSend=Sauver et envoyer au comité
 btn.saveDraft=Sauver comme Draft (Brouillon)
 cfp.reminder=Rappel
 cfp.reminder.proposals=pensez à soumettre votre brouillon au comité en cliquant sur "Envoyer"
-cfp.title=Devoxx France 2016
+cfp.title=ScalaIO France 2016
 conf.label.simple=Conférence
 CONF.subtitle=FR
-CONF.title=Devoxx France 2016
-conference.dates=20 au 22 avril 2016
+CONF.title=ScalaIO France 2016
+conference.dates=27 et 28 octobre 2016
 contacted=Speaker contacté
 d1.label=Uniquement des slides
 d2.label=Slides et du code
@@ -550,11 +550,11 @@ code.label.simple=Codestory
 level1.label=Ouvert à tout niveau d''audience, débutant comme expert
 level2.label=Pour une audience intermédiaire, avec une connaissance sur le sujet
 level3.label=Pour un public d''expert ou de sénior sur ce sujet
-longName=Devoxx FR 2016 CFP
+longName=ScalaIO FR 2016 CFP
 longSplittedName_colored=x
 longSplittedName_whiteEnd=FR 2016
 longSplittedName_whiteStart=Devox
-longYearlyName=Devoxx France 2016
+longYearlyName=ScalaIO France 2016
 mail.access_code.subject=Votre code d''accès présentateur pour {0}
 mail.account_created.subject=Bienvenue sur le CFP pour {0}
 mail.cfp_message_to_speaker.subject=[{1}] {0}
@@ -576,8 +576,8 @@ qualifications.label=Qualifications du présentateur
 qualifications.otherproposals=Sujet(s) proposé(s) par le speaker
 quick.label.simple=Quickie
 remove.sponsorFlag=Retirer le flag sponsor de cette présentation
-shortName=Devoxx FR
-shortYearlyName=Devoxx FR 2016
+shortName=ScalaIO FR
+shortYearlyName=ScalaIO FR 2016
 ssj.label=Server Side Java
 start=Startup presentation
 start.label=
@@ -625,9 +625,9 @@ admin.btn.speakersInvited=Tous les speakers invités
 
 bof.label.simple=Bird of a Feather
 day-monday=Lundi 10 novembre
-day-wednesday=Mercredi 20 avril
-day-thursday=Jeudi 21 avril
-day-friday=Vendredi 22 avril
+#day-wednesday=Mercredi 20 octobre
+day-thursday=Jeudi 27 octobre
+day-friday=Vendredi 28 octobre
 mail.email_validation.subject=Bienvenue à {0}, merci de valider votre adresse email
 mail.issue_reported.subject=Nouvel incident reporté sur le site du CFP
 mail.proposal_approved.subject=Votre proposition de sujet a été approuvée {0}
@@ -687,10 +687,10 @@ userGroup=Faire évaluer aussi ma proposition de sujet par les Golden Ticket ?
 userGroup.checkbox= Oui, j'accepte que ma proposition soit revue par les personnes ayant acheté un Golden Ticket.
 
 goldenTicket.help.title=Golden Ticket
-goldenTicket.help.txt=Une nouveauté de {0} est l''introduction d''un petit comité de sélection composé de personnes ayant acheté l''un des 64 Golden Ticket sur le site de {0}. Si vous acceptez, ils peuvent alors revoir votre présentation, l''évaluer et la noter. Le comité du programme {0} évalue aussi votre proposition, et 2 notes différentes seront alors enregistrées. A noter que vous pouvez changer le status de ce flag à tout moment. <a href="http://www.devoxx.fr/2015/12/golden-ticket/" target="new">Plus de détails sur cette page</a>
+goldenTicket.help.txt=Une nouveauté de {0} est l''introduction d''un petit comité de sélection composé de personnes ayant acheté l''un des 64 Golden Ticket sur le site de {0}. Si vous acceptez, ils peuvent alors revoir votre présentation, l''évaluer et la noter. Le comité du programme {0} évalue aussi votre proposition, et 2 notes différentes seront alors enregistrées. A noter que vous pouvez changer le status de ce flag à tout moment.
 
 gt.title=CFP spécial Golden ticket
-gt.disclaimer=Nous vous remercions de respecter les personnes qui proposent des sujets pour Devoxx France. En utilisant ce compte vous acceptez de ne pas publier sur les réseaux sociaux ou publiquement les informations que vous verrez sur le CFP.
+gt.disclaimer=Nous vous remercions de respecter les personnes qui proposent des sujets pour ScalaIO France. En utilisant ce compte vous acceptez de ne pas publier sur les réseaux sociaux ou publiquement les informations que vous verrez sur le CFP.
 gt.intro.1=Voici la liste complète des propositions que vous n''avez pas encore revu. Vous pouvez trier cette liste par type de présentation, par thème ou par auteur.
 gt.intro.2=Si vous le souhaitez, vous pouvez aussi
 gt.reviewYourVotes=revoir et corriger vos votes

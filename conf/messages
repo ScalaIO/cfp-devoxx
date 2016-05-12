@@ -1,18 +1,18 @@
 # -----------------
 # Main conference details
-CONF.title=Devoxx France 2016
+CONF.title=ScalaIO France 2016
 CONF.subtitle=FR
 
 # Equivalent to ConferenceNaming
-shortYearlyName=Devoxx FR 2016
-longYearlyName=Devoxx France 2016
-shortName=Devoxx France
-longName=Devoxx FR 2016 CFP
+shortYearlyName=ScalaIO FR  2016
+longYearlyName=ScalaIO France 2016
+shortName=ScalaIO France
+longName=ScalaIO FR 2016 CFP
 longSplittedName_whiteStart=Devox
 longSplittedName_colored=x
 longSplittedName_whiteEnd=FR 2016
 # -----------------
-cfp.title=Devoxx FR 2016 CFP
+cfp.title=ScalaIO FR 2016 CFP
 login.error=Invalid email or password
 menu.home=Home
 menu.register=Sign-in
@@ -76,17 +76,17 @@ New.proposal2=New proposal - step 2/2
 Edit.proposal=Edit proposal - step 1/2
 Edit.proposal2=Edit proposal - step 2/2
 title=Presentation title
-title.help=Think carefully and try to create a title that is descriptive enough. Most Devoxxians selects a talk at the very last minute only based on its title.
+title.help=Think carefully and try to create a title that is descriptive enough. Most attendees selects a talk at the very last minute only based on its title.
 summary=Summary of your presentation, for the attendee
 summary.help=Describe your proposal as it will appear on our website and mobile apps. You can use Markdown syntax.
 lang=Main language
 lang.help=100% of {0} talks are in English
 mainSpeaker=Main speaker
 mainSpeaker2=Multiple Speakers?
-mainSpeaker.help=You can add more speakers once the proposal is created. We offer a full Combi pass for the following slots : Conference, University, Hands-on-Labs, Tools-in-Action. Quickie speakers need to purchase a conference pass!
+mainSpeaker.help=You can add more speakers once the proposal is created. We offer a full pass for speakers/
 otherSpeakers=Other speakers
 talkType=Type of talk
-talkType.help=Each type of talk is described on the <a href="http://www.devoxx.fr/faq" target="new">FAQ</a>.
+talkType.help=Each type of talk is described on the <a href="http://scala.io/faq.html" target="new">FAQ</a>.
 
 audienceLevel=Audience level :
 audienceLevel.help=Please, indicate the required audience level for your talk:\
@@ -158,12 +158,12 @@ cfp.reminder.proposals=do not forget to submit your Draft
 cfp.program=Program announced :
 cfp.program.date=from {0}
 video.title=Videos
-video.tag=Review Devoxx FR 2015''s videos on
+video.tag=Review SCALA FR 2015''s videos on
 theme.title=Tracks
-theme.track=List of tracks for Devoxx France 2016:
+theme.track=List of tracks for ScalaIO France 2016:
 track.title=Title
 track.description=Description
-appel.conf.dates=Devoxx France 2016, 20th-22nd April 2016
+appel.conf.dates=ScalaIO France 2016, 27th-28th October 2016
 
 # Tracks
 
@@ -445,7 +445,7 @@ sw.all.quick=All Quickies
 sw.all.bof=All BOFs
 sw.all.start=All Startup''s talks
 sw.all.tia=All Tools in Action
-sw.speakers=Devoxxians
+sw.speakers=Speakers
 sw.intro=The agenda is published every day.
 sw.programme=Agenda
 sw.presentations=Talks
@@ -613,7 +613,7 @@ mail.account_created.subject=Welcome to the CFP for {0} !
 mail.email_validation.subject=Welcome to {0}, please validate your email address now
 mail.issue_reported.subject=New issue reported on CFP web site
 mail.cfp_message_to_speaker.subject=[{1}] Message about your presentation {0}
-mail.question_to_speaker.subject=[{1}] New question posted on Devoxx Web site about {0}
+mail.question_to_speaker.subject=[{1}] New question posted on ScalaIO Web site about {0}
 mail.speaker_message_to_cfp.subject=[{0}] {1} posted a new message
 mail.notify_proposal.subject={0} submitted a proposal [{1}]
 mail.notify_proposal.content=A Proposal has been submitted on the CFP, with Title: [{0}], Track: [{1}] and Type: [{2}]
@@ -654,8 +654,8 @@ error.invalid=Invalid value
 hack.label=Hackaton
 lg_alter.label=Alternate languages on the JVM
 lgaltern.label=Alternate languages on the JVM
-menu.blog=Site DevoxxFR
-signup.long=Register as a speaker on Devoxx France CFP
+menu.blog=Site ScalaIOFR
+signup.long=Register as a speaker on ScalaIO France CFP
 sw.all.hack=Hackatons
 approved=Speaker approved
 cstory=Session de live coding Code-story
@@ -720,7 +720,7 @@ visitor.index.signup2=Sign-up as a visitor and save your Schedule, vote for the 
 
 # welcomeVisitor
 visitor.welcome.title=Welcome {0}
-visitor.welcome.text1=You are now authenticated as a Devoxx visitor. You can mark your favorite talks from the {0} schedule and retrieve your agenda from your profile page.
+visitor.welcome.text1=You are now authenticated as a ScalaIO visitor. You can mark your favorite talks from the {0} schedule and retrieve your agenda from your profile page.
 visitor.welcome.publisher=Browse the conference schedule
 visitor.welcome.profile=See the list of talks you faved
 
@@ -739,13 +739,13 @@ goldenTicket.help.title=Golden Ticket review
 goldenTicket.help.txt=A new feature of {0} is the introduction of a Community Advisory Panel comprised of people who have bought a ticket during the CFP window. If you agree, they will be able to review and rate your proposals. The Program Committee will also review and rate proposals, and the 2 sets of ratings will be used to determine what make it onto the final agenda.
 
 gt.title=CFP for Golden ticket
-gt.disclaimer=Please respect the privacy of people submitting talks to Devoxx. By opening this account you agree not to disclose or publish publicly, including via social media, any of the information you see in the CFP tool.
+gt.disclaimer=Please respect the privacy of people submitting talks to ScalaIO. By opening this account you agree not to disclose or publish publicly, including via social media, any of the information you see in the CFP tool.
 
 gt.intro.1=This is the full list of Proposals. You can sort by Proposal title, by Speaker or type of Talk.
 gt.intro.2=If needed, you can also
 gt.reviewYourVotes=review your Votes
 gt.intro.3=while the CFP is open.
-gt.special.need=If you have a specific speaker you would love to see present at Devoxx FR, drop an email to program@devoxx.fr and we’ll do our best to get them there.
+gt.special.need=If you have a specific speaker you would love to see present at ScalaIO FR, drop an email to cfp@scala.io and we’ll do our best to get them there.
 gt.todo=Your todo list size:
 
 gt.yourVotes=Your votes
