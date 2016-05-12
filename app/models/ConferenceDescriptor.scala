@@ -3,25 +3,31 @@ package models
 import java.util.Locale
 
 import org.joda.time.{Period, DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
+
 import play.api.Play
+import com.github.nscala_time.time.Imports._
+import com.typesafe.config.ConfigValue
+import scala.collection.JavaConversions._
+import play.api.libs.json._
 
 /**
-  * ConferenceDescriptor.
-  * This might be the first file to look at, and to customize.
-  * Idea behind this file is to try to collect all configurable parameters for a conference.
-  *
-  * For labels, please do customize messages and messages.fr
-  *
-  * Note from Nicolas : the first version of the CFP was much more "static" but hardly configurable.
-  *
-  * @author Frederic Camblor, BDX.IO 2014
-  */
+ * ConferenceDescriptor.
+ * This might be the first file to look at, and to customize.
+ * Idea behind this file is to try to collect all configurable parameters for a conference.
+ *
+ * For labels, please do customize messages and messages.fr
+ *
+ * Note from Nicolas : the first version of the CFP was much more "static" but hardly configurable.
+ *
+ * @author Frederic Camblor, BDX.IO 2014
+ */
 
-case class ConferenceUrls(faq: String, registration: String,confWebsite: String, cfpHostname: String){
-    def cfpURL:String={
-    if(Play.current.configuration.getBoolean("cfp.activateHTTPS").getOrElse(false)){
+case class ConferenceUrls(faq: String, registration: String, confWebsite: String, cfpHostname: String) {
+  def cfpURL: String = {
+    if (Play.current.configuration.getBoolean("cfp.activateHTTPS").getOrElse(false)) {
       s"https://$cfpHostname"
-    }else{
+    } else {
       s"http://$cfpHostname"
     }
   }
@@ -101,15 +107,14 @@ case class ConferenceDescriptor(eventCode: String,
                                 conferenceSponsor: ConferenceSponsor,
                                 locale: List[Locale],
                                 localisation: String,
-                                notifyProposalSubmitted:Boolean,
-                                maxProposalSummaryCharacters:Int=1200
-                               )
+                                notifyProposalSubmitted: Boolean,
+                                maxProposalSummaryCharacters: Int = 1200)
 
 object ConferenceDescriptor {
 
   /**
-    * TODO configure here the kind of talks you will propose
-    */
+   * TODO configure here the kind of talks you will propose
+   */
   object ConferenceProposalTypes {
     val CONF = ProposalType(id = "conf", label = "conf.label")
 
@@ -132,6 +137,7 @@ object ConferenceDescriptor {
     val ALL = List(CONF, TIA, LAB, QUICK,KEY, OTHER)
 
     def valueOf(id: String): ProposalType = id match {
+
       case "conf" => CONF
       case "lab" => LAB
       case "tia" => TIA
@@ -171,37 +177,35 @@ object ConferenceDescriptor {
   }
 
   // TODO Configure here your Conference's tracks.
+
+  def getConferenceTracksFromConfiguration = {
+    Play.current.configuration.getConfigList("cfp.tracks").map(
+      l => {
+        l.map(
+          t => (t.getString("id") :: t.getString("icon") :: Nil))
+          .collect({
+            case Some(id) :: Some(icon) :: Nil => (Track(id, id + ".label"), TrackDesc(id, icon, "track." + id + ".title", "track." + id + ".desc"))
+          }).toList
+      })
+      .getOrElse(List())
+  }
+
   object ConferenceTracks {
-    val JAVA = Track("java", "java.label")
-    val MOBILE = Track("mobile", "mobile.label")
-    val WEB = Track("wm", "web.label")
-    val ARCHISEC = Track("archisec", "archisec.label")
-    val AGILE_DEVOPS = Track("agTest", "agile_devops.label")
-    val CLOUD = Track("cldops", "cloud.label")
-    val BIGDATA = Track("bigd", "bigdata.label")
-    val FUTURE = Track("future", "future.label")
-    val LANG = Track("lang", "lang.label")
-    val UNKNOWN = Track("unknown", "unknown track")
-    val ALL = List(JAVA,MOBILE,WEB,ARCHISEC,AGILE_DEVOPS,CLOUD,BIGDATA,FUTURE,LANG,UNKNOWN)
+
+    val ALL = getConferenceTracksFromConfiguration.map(_._1)
+
   }
 
   // TODO configure the description for each Track
   object ConferenceTracksDescription {
-    val JAVA = TrackDesc(ConferenceTracks.JAVA.id, "/assets/dvfr2015/images/icon_javase.png", "track.java.title", "track.java.desc")
-    val MOBILE = TrackDesc(ConferenceTracks.MOBILE.id, "/assets/dvfr2015/images/icon_web.png", "track.mobile.title", "track.mobile.desc")
-    val WEB = TrackDesc(ConferenceTracks.WEB.id, "/assets/dvfr2015/images/icon_web.png", "track.web.title", "track.web.desc")
-    val ARCHISEC = TrackDesc(ConferenceTracks.ARCHISEC.id, "/assets/dvfr2015/images/icon_architecture.png", "track.archisec.title", "track.archisec.desc")
-    val AGILE_DEVOPS = TrackDesc(ConferenceTracks.AGILE_DEVOPS.id, "/assets/dvfr2015/images/icon_startup.png", "track.agile_devops.title", "track.agile_devops.desc")
-    val CLOUD = TrackDesc(ConferenceTracks.CLOUD.id, "/assets/dvfr2015/images/icon_cloud.png", "track.cloud.title", "track.cloud.desc")
-    val BIGDATA = TrackDesc(ConferenceTracks.BIGDATA.id, "/assets/dvfr2015/images/icon_mobile.png", "track.bigdata.title", "track.bigdata.desc")
-    val FUTURE = TrackDesc(ConferenceTracks.FUTURE.id, "/assets/dvfr2015/images/icon_future.png", "track.future.title", "track.future.desc")
-    val LANG = TrackDesc(ConferenceTracks.LANG.id, "/assets/dvfr2015/images/icon_alternative.png", "track.lang.title", "track.lang.desc")
-
-    val ALL = List(JAVA, MOBILE, WEB, ARCHISEC, AGILE_DEVOPS, CLOUD, BIGDATA, FUTURE, LANG)
+    val ALL = getConferenceTracksFromConfiguration.map(_._2)
 
     def findTrackDescFor(t: Track): TrackDesc = {
-      ALL.find(_.id == t.id).getOrElse(JAVA)
+      ALL.find(_.id == t.id).head
     }
+
+    implicit val conferenceTracksDescriptionFormat = Json.format[TrackDesc]
+
   }
 
   // TODO If you want to use the Devoxx Scheduler, you can describe here the list of rooms, with capacity for seats
@@ -263,6 +267,7 @@ object ConferenceDescriptor {
     val allRoomsLabThursday = List(F001, F004)
     val allRoomsLabFriday = List(F001, F004)
 
+
     val allRoomsBOF = List()
 
     val keynoteRoom = List(AMPHI_500)
@@ -272,7 +277,6 @@ object ConferenceDescriptor {
     val allRoomsQuickiesThu = List(AMPHI_500)
     val allRoomsQuickiesFriday = List(AMPHI_500)
   }
-
 
   // TODO if you want to use the Scheduler, you can configure the breaks
   object ConferenceSlotBreaks {
@@ -565,6 +569,7 @@ object ConferenceDescriptor {
     }
 
     // Registration, coffee break, lunch etc
+
     val wednesdayBreaks = List.empty
 
     val thursdayBreaks = List(
@@ -654,13 +659,19 @@ object ConferenceDescriptor {
     , "CPE, Lyon"
     , notifyProposalSubmitted = true // Do not send an email for each talk submitted for France
     , 1200 // French developers tends to be a bit verbose... we need extra space :-)
-  )
+    )
+
+  def isConferenceOpen() = {
+    val tim = current().timing
+    val now = DateTime.now
+    now.isAfter(tim.cfpOpenedOn) && now.isBefore(tim.cfpClosedOn)
+  }
 
   // It has to be a def, not a val, else it is not re-evaluated
   def isCFPOpen: Boolean = {
     Play.current.configuration.getBoolean("cfp.isOpen").getOrElse(false)
   }
 
-  def isGoldenTicketActive:Boolean = Play.current.configuration.getBoolean("goldenTicket.active").getOrElse(false)
+  def isGoldenTicketActive: Boolean = Play.current.configuration.getBoolean("goldenTicket.active").getOrElse(false)
 
 }

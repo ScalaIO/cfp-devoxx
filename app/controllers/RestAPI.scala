@@ -25,12 +25,12 @@ package controllers
 
 import library.Benchmark
 import models._
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 import play.api.i18n.Messages
-import play.api.libs.json.{JsNull, Json}
-import play.api.mvc.{SimpleResult, _}
+import play.api.libs.json.{ JsNull, Json }
+import play.api.mvc.{ SimpleResult, _ }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 /**
   * A real REST api for men.
@@ -47,20 +47,20 @@ object RestAPI extends Controller {
     implicit request =>
 
       docName match {
-        case "link" => Ok(views.html.RestAPI.docLink())
-        case "links" => Ok(views.html.RestAPI.docLink())
-        case "speaker" => Ok(views.html.RestAPI.docSpeaker())
+        case "link"             => Ok(views.html.RestAPI.docLink())
+        case "links"            => Ok(views.html.RestAPI.docLink())
+        case "speaker"          => Ok(views.html.RestAPI.docSpeaker())
         case "list-of-speakers" => Ok(views.html.RestAPI.docSpeakers())
-        case "talk" => Ok(views.html.RestAPI.docTalk())
-        case "conference" => Ok(views.html.RestAPI.docConference())
-        case "conferences" => Ok(views.html.RestAPI.docConferences())
-        case "schedules" => Ok(views.html.RestAPI.docSchedules())
-        case "schedule" => Ok(views.html.RestAPI.docSchedule())
-        case "proposalType" => Ok(views.html.RestAPI.docProposalType())
-        case "tracks" => Ok(views.html.RestAPI.docTrack())
-        case "track" => Ok(views.html.RestAPI.docTrack())
-        case "room" => Ok(views.html.RestAPI.docRoom())
-        case other => NotFound("Sorry, no documentation for this profile")
+        case "talk"             => Ok(views.html.RestAPI.docTalk())
+        case "conference"       => Ok(views.html.RestAPI.docConference())
+        case "conferences"      => Ok(views.html.RestAPI.docConferences())
+        case "schedules"        => Ok(views.html.RestAPI.docSchedules())
+        case "schedule"         => Ok(views.html.RestAPI.docSchedule())
+        case "proposalType"     => Ok(views.html.RestAPI.docProposalType())
+        case "track"            => Ok(views.html.RestAPI.docTrack())
+        case "room"             => Ok(views.html.RestAPI.docRoom())
+        case "helpers"          => Ok(views.html.RestAPI.docHelpers())
+        case other              => NotFound("Sorry, no documentation for this profile")
       }
   }
 
@@ -83,9 +83,7 @@ object RestAPI extends Controller {
                   conference: Conference =>
                     conference.link
                 }
-              }
-            )
-          )
+              }))
           Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("conferences").absoluteURL().toString + ">; rel=\"profile\""))
         }
       }
@@ -131,28 +129,16 @@ object RestAPI extends Controller {
                     Link(
                       routes.RestAPI.showSpeakers(conference.eventCode).absoluteURL(),
                       routes.RestAPI.profile("list-of-speakers").absoluteURL(),
-                      "See all speakers"
-                    ),
+                      "See all speakers"),
                     Link(
                       routes.RestAPI.showAllSchedules(conference.eventCode).absoluteURL(),
                       routes.RestAPI.profile("schedules").absoluteURL(),
-                      "See the whole agenda"
-                    ),
+                      "See the whole agenda"),
                     Link(
                       routes.RestAPI.showProposalTypes(conference.eventCode).absoluteURL(),
                       routes.RestAPI.profile("proposalType").absoluteURL(),
-                      "See the different kind of conferences"
-                    ),
-                    Link(
-                      routes.RestAPI.showTracks(conference.eventCode).absoluteURL(),
-                      routes.RestAPI.profile("track").absoluteURL(),
-                      "See the different kind of tracks"
-                    )
-                  ))
-                )
-              )
-              Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag,
-                "Links" -> ("<" + routes.RestAPI.profile("conference").absoluteURL() + ">; rel=\"profile\""))
+                      "See the different kind of conferences")))))
+              Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("conference").absoluteURL().toString + ">; rel=\"profile\""))
             }
           }
       }.getOrElse(NotFound("Conference not found"))
@@ -187,19 +173,16 @@ object RestAPI extends Controller {
                 "twitter" -> speaker.twitter.map(u => Json.toJson(u.trim())).getOrElse(JsNull),
                 "company" -> speaker.company.map(u => Json.toJson(u.trim())).getOrElse(JsNull),
                 "links" -> Json.toJson(List(
-                  Link(routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL(),
-                    routes.RestAPI.profile("speaker").absoluteURL(),
-                    speaker.cleanName)
-                )
-                )
-              )
+
+                  Link(routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
+                    routes.RestAPI.profile("speaker").absoluteURL().toString,
+                    speaker.cleanName))))
           }
 
           val jsonObject = Json.toJson(updatedSpeakers)
 
           Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag,
-            "Links" -> ("<" + routes.RestAPI.profile("list-of-speakers").absoluteURL() + ">; rel=\"profile\"")
-          )
+            "Links" -> ("<" + routes.RestAPI.profile("list-of-speakers").absoluteURL().toString + ">; rel=\"profile\""))
         }
       }
   }
@@ -242,11 +225,7 @@ object RestAPI extends Controller {
                     "links" -> Json.toJson(
                       List(
                         Link(routes.RestAPI.showTalk(eventCode, proposal.id).absoluteURL().toString,
-                          routes.RestAPI.profile("talk").absoluteURL().toString, "More details about this talk"
-                        )
-                      ).++(allSpeakers)
-                    )
-                  )
+                          routes.RestAPI.profile("talk").absoluteURL().toString, "More details about this talk")).++(allSpeakers)))
               }
 
               val updatedSpeaker =
@@ -261,8 +240,7 @@ object RestAPI extends Controller {
                   "bio" -> Json.toJson(speaker.bio),
                   "bioAsHtml" -> Json.toJson(speaker.bioAsHtml),
                   "twitter" -> speaker.cleanTwitter.map(Json.toJson(_)).getOrElse(JsNull),
-                  "acceptedTalks" -> Json.toJson(updatedTalks)
-                )
+                  "acceptedTalks" -> Json.toJson(updatedTalks))
 
               val jsonObject = Json.toJson(updatedSpeaker)
               Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("speaker").absoluteURL().toString + ">; rel=\"profile\""))
@@ -303,13 +281,9 @@ object RestAPI extends Controller {
                           Link(
                             routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
                             routes.RestAPI.profile("speaker").absoluteURL().toString,
-                            speaker.cleanName
-                          )
-                        ),
-                        "name" -> Json.toJson(speaker.cleanName)
-                      )
-                  })
-                )
+                            speaker.cleanName)),
+                        "name" -> Json.toJson(speaker.cleanName))
+                  }))
               val jsonObject = Json.toJson(updatedProposal)
               Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag)
             }
@@ -332,7 +306,7 @@ object RestAPI extends Controller {
       // val proposals = ApprovedProposal.allApproved().filterNot(_.event==eventCode).toList.sortBy(_.title)
 
       val stupidEventCode = Messages("longYearlyName") // Because the value in the DB for Devoxx BE 2015 is not valid
-    val proposals = ApprovedProposal.allApproved().filter(_.event == stupidEventCode).toList.sortBy(_.title)
+      val proposals = ApprovedProposal.allApproved().filter(_.event == stupidEventCode).toList.sortBy(_.title)
 
       val etag = proposals.hashCode.toString
 
@@ -351,11 +325,7 @@ object RestAPI extends Controller {
 
               // Transform speakerUUID to Speaker name, this simplify Angular Code
               p.copy(
-                mainSpeaker = mainWebuser.map(_.cleanName).getOrElse("")
-                , secondarySpeaker = secWebuser.map(_.cleanName)
-                , otherSpeakers = oSpeakers.flatMap(s => s.map(_.cleanName))
-                , privateMessage = preferredDay.getOrElse("")
-              )
+                mainSpeaker = mainWebuser.map(_.cleanName).getOrElse(""), secondarySpeaker = secWebuser.map(_.cleanName), otherSpeakers = oSpeakers.flatMap(s => s.map(_.cleanName)), privateMessage = preferredDay.getOrElse(""))
 
           }
 
@@ -363,19 +333,14 @@ object RestAPI extends Controller {
             "talks" -> Json.toJson(
               Map(
                 "approved" -> Json.toJson(proposalsWithSpeaker.filter(_.state == ProposalState.APPROVED)),
-                "accepted" -> Json.toJson(proposalsWithSpeaker.filter(_.state == ProposalState.ACCEPTED))
-              )
-            )
-          )
+                "accepted" -> Json.toJson(proposalsWithSpeaker.filter(_.state == ProposalState.ACCEPTED)))))
 
           val jsonObject = Json.toJson(finalJson)
 
           Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag,
-            "Links" -> ("<" + routes.RestAPI.profile("list-of-approved-talks").absoluteURL().toString + ">; rel=\"profile\"")
-          )
+            "Links" -> ("<" + routes.RestAPI.profile("list-of-approved-talks").absoluteURL().toString + ">; rel=\"profile\""))
         }
       }
-
 
   }
 
@@ -385,32 +350,25 @@ object RestAPI extends Controller {
       val ifNoneMatch = request.headers.get(IF_NONE_MATCH)
       val mapOfSchedules = Map(
         "links" -> Json.toJson(List(
-          //          Link(
-          //            routes.RestAPI.showScheduleFor(eventCode, "monday").absoluteURL().toString,
-          //            routes.RestAPI.profile("schedule").absoluteURL().toString,
-          //            Messages("sw.show.title.mon")
-          //          ), Link(
-          //            routes.RestAPI.showScheduleFor(eventCode, "tuesday").absoluteURL().toString,
-          //            routes.RestAPI.profile("schedule").absoluteURL().toString,
-          //            Messages("sw.show.title.tue")
-          //          ),
+          Link(
+            routes.RestAPI.showScheduleFor(eventCode, "monday").absoluteURL().toString,
+            routes.RestAPI.profile("schedule").absoluteURL().toString,
+            "Schedule for Monday 10th November 2015"), Link(
+            routes.RestAPI.showScheduleFor(eventCode, "tuesday").absoluteURL().toString,
+            routes.RestAPI.profile("schedule").absoluteURL().toString,
+            "Schedule for Tuesday 11th November 2015"),
           Link(
             routes.RestAPI.showScheduleFor(eventCode, "wednesday").absoluteURL().toString,
             routes.RestAPI.profile("schedule").absoluteURL().toString,
-            Messages("sw.show.title.wed")
-          ),
+            "Schedule for Wednesday 12th November 2015"),
           Link(
             routes.RestAPI.showScheduleFor(eventCode, "thursday").absoluteURL().toString,
             routes.RestAPI.profile("schedule").absoluteURL().toString,
-            Messages("sw.show.title.thu")
-          ),
+            "Schedule for Thursday 13th November 2015"),
           Link(
             routes.RestAPI.showScheduleFor(eventCode, "friday").absoluteURL().toString,
             routes.RestAPI.profile("schedule").absoluteURL().toString,
-            Messages("sw.show.title.fri")
-          )
-        ))
-      )
+            "Schedule for Friday 14th November 2015"))))
       val newEtag = mapOfSchedules.hashCode().toString
 
       ifNoneMatch match {
@@ -456,13 +414,9 @@ object RestAPI extends Controller {
                               Link(
                                 routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
                                 routes.RestAPI.profile("speaker").absoluteURL().toString,
-                                speaker.cleanName
-                              )
-                            ),
-                            "name" -> Json.toJson(speaker.cleanName)
-                          )
-                      })
-                    )
+                                speaker.cleanName)),
+                            "name" -> Json.toJson(speaker.cleanName))
+                      }))
                   updatedProposal
               }
 
@@ -470,30 +424,14 @@ object RestAPI extends Controller {
               val slotToDate = new DateTime(slot.to.getMillis).toDateTime(DateTimeZone.forID("Europe/Brussels"))
 
               Map(
-                "slotId" -> Json.toJson(slot.id)
-                , "day" -> Json.toJson(slot.day)
-                , "roomId" -> Json.toJson(slot.room.id)
-                , "roomName" -> Json.toJson(slot.room.name)
-                , "fromTime" -> Json.toJson(fromDate.toString("HH:mm"))
-                , "fromTimeMillis" -> Json.toJson(fromDate.getMillis)
-                , "toTime" -> Json.toJson(slotToDate.toString("HH:mm"))
-                , "toTimeMillis" -> Json.toJson(slotToDate.getMillis)
-                , "talk" -> upProposal.map(Json.toJson(_)).getOrElse(JsNull)
-                , "break" -> Json.toJson(slot.break)
-                , "roomSetup" -> Json.toJson(slot.room.setup)
-                , "roomCapacity" -> Json.toJson(slot.room.capacity)
-                , "notAllocated" -> Json.toJson(slot.notAllocated)
-              )
+                "slotId" -> Json.toJson(slot.id), "day" -> Json.toJson(slot.day), "roomId" -> Json.toJson(slot.room.id), "roomName" -> Json.toJson(slot.room.name), "fromTime" -> Json.toJson(fromDate.toString("HH:mm")), "fromTimeMillis" -> Json.toJson(fromDate.getMillis), "toTime" -> Json.toJson(slotToDate.toString("HH:mm")), "toTimeMillis" -> Json.toJson(slotToDate.getMillis), "talk" -> upProposal.map(Json.toJson(_)).getOrElse(JsNull), "break" -> Json.toJson(slot.break), "roomSetup" -> Json.toJson(slot.room.setup), "roomCapacity" -> Json.toJson(slot.room.capacity), "notAllocated" -> Json.toJson(slot.notAllocated))
           }
           val jsonObject = Json.toJson(
             Map(
-              "slots" -> Json.toJson(toReturn)
-            )
-          )
+              "slots" -> Json.toJson(toReturn)))
           Ok(jsonObject).as(JSON).withHeaders(ETAG -> newEtag, "Links" -> ("<" + routes.RestAPI.profile("schedule").absoluteURL().toString + ">; rel=\"profile\""))
         }
       }
-
 
   }
 
@@ -505,10 +443,7 @@ object RestAPI extends Controller {
         proposalType =>
           Json.toJson {
             Map(
-              "id" -> Json.toJson(proposalType.id)
-              , "description" -> Json.toJson(Messages(proposalType.label))
-              , "label" -> Json.toJson(Messages(proposalType.id))
-            )
+              "id" -> Json.toJson(proposalType.id), "description" -> Json.toJson(Messages(proposalType.label)), "label" -> Json.toJson(Messages(proposalType.id)))
           }
       }
       val etag = allProposalTypes.hashCode().toString
@@ -519,9 +454,7 @@ object RestAPI extends Controller {
           val jsonObject = Json.toJson(
             Map(
               "content" -> Json.toJson("All types of proposal"),
-              "proposalTypes" -> Json.toJson(allProposalTypes)
-            )
-          )
+              "proposalTypes" -> Json.toJson(allProposalTypes)))
 
           Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("proposalType").absoluteURL().toString + ">; rel=\"profile\""))
         }
@@ -536,11 +469,7 @@ object RestAPI extends Controller {
         trackDesc =>
           Json.toJson {
             Map(
-              "id" -> Json.toJson(trackDesc.id)
-              , "imgsrc" -> Json.toJson(trackDesc.imgSrc)
-              , "title" -> Json.toJson(Messages(trackDesc.i18nTitleProp))
-              , "description" -> Json.toJson(Messages(trackDesc.i18nDescProp))
-            )
+              "id" -> Json.toJson(trackDesc.id), "imgsrc" -> Json.toJson(trackDesc.imgSrc), "title" -> Json.toJson(Messages(trackDesc.i18nTitleProp)), "description" -> Json.toJson(Messages(trackDesc.i18nDescProp)))
           }
       }
       val etag = allTracks.hashCode().toString
@@ -551,9 +480,7 @@ object RestAPI extends Controller {
           val jsonObject = Json.toJson(
             Map(
               "content" -> Json.toJson("All tracks"),
-              "tracks" -> Json.toJson(allTracks)
-            )
-          )
+              "tracks" -> Json.toJson(allTracks)))
 
           Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("track").absoluteURL().toString + ">; rel=\"profile\""))
         }
@@ -568,11 +495,7 @@ object RestAPI extends Controller {
         room =>
           Json.toJson {
             Map(
-              "id" -> Json.toJson(room.id)
-              , "name" -> Json.toJson(room.name)
-              , "capacity" -> Json.toJson(room.capacity)
-              , "setup" -> Json.toJson(room.setup)
-            )
+              "id" -> Json.toJson(room.id), "name" -> Json.toJson(room.name), "capacity" -> Json.toJson(room.capacity), "setup" -> Json.toJson(room.setup))
           }
       }
       val etag = allRooms.hashCode().toString
@@ -583,9 +506,7 @@ object RestAPI extends Controller {
           val jsonObject = Json.toJson(
             Map(
               "content" -> Json.toJson("All rooms"),
-              "rooms" -> Json.toJson(allRooms)
-            )
-          )
+              "rooms" -> Json.toJson(allRooms)))
 
           Ok(jsonObject).as(JSON).withHeaders(
             ETAG -> etag,
@@ -629,13 +550,9 @@ object RestAPI extends Controller {
                               Link(
                                 routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
                                 routes.RestAPI.profile("speaker").absoluteURL().toString,
-                                speaker.cleanName
-                              )
-                            ),
-                            "name" -> Json.toJson(speaker.cleanName)
-                          )
-                      })
-                    )
+                                speaker.cleanName)),
+                            "name" -> Json.toJson(speaker.cleanName))
+                      }))
                   updatedProposal
               }
 
@@ -643,107 +560,26 @@ object RestAPI extends Controller {
               val slotToDate = new DateTime(slot.to.getMillis).toDateTime(DateTimeZone.forID("Europe/Brussels"))
 
               Map(
-                "slotId" -> Json.toJson(slot.id)
-                , "day" -> Json.toJson(slot.day)
-                , "roomId" -> Json.toJson(slot.room.id)
-                , "roomName" -> Json.toJson(slot.room.name)
-                , "fromTime" -> Json.toJson(fromDate.toString("HH:mm"))
-                , "fromTimeMillis" -> Json.toJson(fromDate.getMillis)
-                , "toTime" -> Json.toJson(slotToDate.toString("HH:mm"))
-                , "toTimeMillis" -> Json.toJson(slotToDate.getMillis)
-                , "talk" -> upProposal.map(Json.toJson(_)).getOrElse(JsNull)
-                , "break" -> Json.toJson(slot.break)
-                , "roomSetup" -> Json.toJson(slot.room.setup)
-                , "roomCapacity" -> Json.toJson(slot.room.capacity)
-                , "notAllocated" -> Json.toJson(slot.notAllocated)
-              )
+                "slotId" -> Json.toJson(slot.id), "day" -> Json.toJson(slot.day), "roomId" -> Json.toJson(slot.room.id), "roomName" -> Json.toJson(slot.room.name), "fromTime" -> Json.toJson(fromDate.toString("HH:mm")), "fromTimeMillis" -> Json.toJson(fromDate.getMillis), "toTime" -> Json.toJson(slotToDate.toString("HH:mm")), "toTimeMillis" -> Json.toJson(slotToDate.getMillis), "talk" -> upProposal.map(Json.toJson(_)).getOrElse(JsNull), "break" -> Json.toJson(slot.break), "roomSetup" -> Json.toJson(slot.room.setup), "roomCapacity" -> Json.toJson(slot.room.capacity), "notAllocated" -> Json.toJson(slot.notAllocated))
           }
           val jsonObject = Json.toJson(
             Map(
-              "slots" -> Json.toJson(toReturn)
-            )
-          )
+              "slots" -> Json.toJson(toReturn)))
           Ok(jsonObject).as(JSON).withHeaders(ETAG -> newEtag, "Links" -> ("<" + routes.RestAPI.profile("schedule").absoluteURL().toString + ">; rel=\"profile\""))
         }
       }
   }
 
-  def topFavedTalks(eventCode: String, limit: Int) = UserAgentActionAndAllowOrigin {
-    implicit request =>
 
-      val ifNoneMatch = request.headers.get(IF_NONE_MATCH)
-      val topFavedTalks = FavoriteTalk.all().toList.sortBy(_._2).reverse.take(limit)
-      val newEtag = "t_" + topFavedTalks.hashCode().toString
+  def showTracksList = UserAgentActionAndAllowOrigin {
+    import models.Track.trackFormat
+    import models.ConferenceDescriptor.ConferenceTracksDescription.conferenceTracksDescriptionFormat
 
-      ifNoneMatch match {
-        case Some(someEtag) if someEtag == newEtag => NotModified
-        case other => {
-          val toReturn = topFavedTalks.map {
-            case (proposal, vote) =>
-
-              val updatedProposalWithLink = {
-                val allSpeakers = proposal.allSpeakerUUIDs.flatMap {
-                  uuid => Speaker.findByUUID(uuid)
-                }.map {
-                  speaker =>
-                    Link(routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
-                      routes.RestAPI.profile("speaker").absoluteURL().toString,
-                      speaker.cleanName)
-                }
-
-                Map(
-                  "id" -> Json.toJson(proposal.id),
-                  "title" -> Json.toJson(proposal.title),
-                  "talkType" -> Json.toJson(Messages(proposal.talkType.id)),
-                  "talkTypeId" -> Json.toJson(proposal.talkType.id),
-                  "links" -> Json.toJson(
-                    List(
-                      Link(routes.RestAPI.showTalk(eventCode, proposal.id).absoluteURL().toString,
-                        routes.RestAPI.profile("talk").absoluteURL().toString, "More details about this talk"
-                      )
-                    ).++(allSpeakers)
-                  )
-                )
-              }
-
-              val maybeSlot = {
-                ScheduleConfiguration.findSlotForConfType(proposal.talkType.id, proposal.id).map {
-                  slot =>
-                    val fromDate = new DateTime(slot.from.getMillis).toDateTime(DateTimeZone.forID("Europe/Brussels"))
-                    val slotToDate = new DateTime(slot.to.getMillis).toDateTime(DateTimeZone.forID("Europe/Brussels"))
-
-                    Map(
-                      "slotId" -> Json.toJson(slot.id)
-                      , "day" -> Json.toJson(slot.day)
-                      , "roomId" -> Json.toJson(slot.room.id)
-                      , "roomName" -> Json.toJson(slot.room.name)
-                      , "fromTime" -> Json.toJson(fromDate.toString("HH:mm"))
-                      , "fromTimeMillis" -> Json.toJson(fromDate.getMillis)
-                      , "toTime" -> Json.toJson(slotToDate.toString("HH:mm"))
-                      , "toTimeMillis" -> Json.toJson(slotToDate.getMillis)
-                      , "talk" -> Json.toJson(updatedProposalWithLink)
-                      , "break" -> Json.toJson(slot.break)
-                      , "roomSetup" -> Json.toJson(slot.room.setup)
-                      , "roomCapacity" -> Json.toJson(slot.room.capacity)
-                      , "notAllocated" -> Json.toJson(slot.notAllocated)
-                    )
-                }
-              }
-
-              Map(
-                "vote" -> Json.toJson(vote),
-                "slot" -> maybeSlot.map(Json.toJson(_)).getOrElse(JsNull)
-              )
-          }
-          val jsonObject = Json.toJson(
-            Map(
-              "topTalks" -> Json.toJson(toReturn)
-            )
-          )
-          Ok(jsonObject).as(JSON).withHeaders(ETAG -> newEtag)
-        }
-      }
+    Ok(Json.toJson(ConferenceDescriptor.getConferenceTracksFromConfiguration.map(t => Map(
+      "track" -> Json.toJson(t._1),
+      "description" -> Json.toJson(t._2)))))
   }
+
 }
 
 object UserAgentActionAndAllowOrigin extends ActionBuilder[Request] with play.api.http.HeaderNames {
@@ -789,8 +625,7 @@ object Conference {
     Link(
       routes.RestAPI.showConference(ConferenceDescriptor.current().eventCode).absoluteURL(),
       routes.RestAPI.profile("conference").absoluteURL(),
-      "See more details about " + Messages("longYearlyName")
-    ))
+      "See more details about " + Messages("longYearlyName")))
 
   def all(implicit req: RequestHeader) = {
     List(currentConference)

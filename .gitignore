@@ -51,3 +51,4 @@ run-fr.sh
 env.sh
 stores/redis/*
 stores/elasticsearch/*
+mycmd

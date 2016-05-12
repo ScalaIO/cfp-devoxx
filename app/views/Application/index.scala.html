@@ -26,6 +26,12 @@
                     </div>
                     </div>
                 }
+            <div class="col-md-12 col-sm-12">
+                @Customize.ConferenceBanner()
+                <!-- <h3><a href="/2016/index.html"><i class="icon-arrow-right"></i> Programme complet</a> </h3> -->
+                <hr>
+            </div>
+
 
             <div class="col-md-5 col-sm-12">
                 <h3><i class="icon-calendar"></i> Agenda</h3>
@@ -37,6 +43,10 @@
                     <p><strong>@Messages("cfp.reminder") :</strong> <span class="label label-danger">@Messages("cfp.isClosed")</span> </p>
                 }
                 <p><strong>@Messages("cfp.program")</strong> @Messages("cfp.program.date", FormatDate.jodaFullDateFormat(ConferenceDescriptor.current().timing.scheduleAnnouncedOn, lang))</p>
+            </div>
+
+            <div class="col-md-5 col-sm-12">
+              @Customize.ConferencePreviousForHome()
             </div>
 
             <div class="clearfix">
