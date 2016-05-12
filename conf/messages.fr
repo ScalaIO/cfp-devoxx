@@ -452,7 +452,6 @@ sw.faq=Plus d''explications sur chaque format ? Voir notre
 calendar.pref=Préférences de plannification
 calendar.pref.thursday=Le jeudi
 calendar.pref.friday=Le vendredi
-calendar.pref.wednesday=Le mercredi
 
 calendar.pref.reset=Pas de préférences
 sw.all.other=Evénements spéciaux
