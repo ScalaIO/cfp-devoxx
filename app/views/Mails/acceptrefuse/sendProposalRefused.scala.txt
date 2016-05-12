@@ -23,7 +23,7 @@ we received close to 800 proposals and the available slots are very limited.
 Proposition title : @proposal.title, @Messages(proposal.talkType.id).
 
 We would like to thank you sincerely for your proposal.
-Hopefully we can still welcome you as a Devoxxian, registration details
+Hopefully we can still welcome you as an attendee, registration details
 
 @ConferenceDescriptor.current().conferenceUrls.registration
 

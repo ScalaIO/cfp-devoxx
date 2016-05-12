@@ -205,7 +205,7 @@ class ZapActor extends Actor {
 
   def doNotifySpeakerRequestToTalk(authorUUID: String, rtt: RequestToTalk) {
     RequestToTalk.save(authorUUID, rtt)
-    Mails.sendInvitationForSpeaker(rtt.speakerEmail, rtt.message.getOrElse("Hi, we would like to contact you for Devoxx."), rtt.id)
+    Mails.sendInvitationForSpeaker(rtt.speakerEmail, rtt.message.getOrElse("Hi, we would like to contact you for ScalaIO."), rtt.id)
   }
 
   def doEditRequestToTalk(authorUUID: String, rtt: RequestToTalk) {

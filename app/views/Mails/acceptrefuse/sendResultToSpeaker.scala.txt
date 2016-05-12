@@ -114,10 +114,8 @@ Please, do not answer this email. Instead send any comment through the web inter
 
 @if(listOfApprovedProposals.size==0){
 We're sorry to inform you that none of your proposals has been accepted for @Messages("longYearlyName").
-The program committee has received more than 670 proposals for 154 slots. As you can imagine, the selection of speakers
-was a quite uneasy task, considering that we received a lot of very interesting applications for the conference.
+As you can imagine, the selection of speakers was a difficult task, considering that we received a lot of very interesting applications for the conference.
 We would like to thank you for your time and we look forward to see you on @ConferenceDescriptor.current().timing.firstDayEn, at @Messages("longName").
-Please, do not forget Devoxx UK in London, the CFP is also available at https://cfp.devoxx.com
 }
 
 The @Messages("longName") program committee.
