@@ -12,14 +12,17 @@ services:
 #      - ~/.sbt:/root/.sbt
   elasticsearch:
    image: elasticsearch:1.7.0
-   ports: ["9200:59200"]
+   ports: ["59200:9200"]
 #   networks: ["private"]
    volumes:
-      - ./stores/elasticsearch/data:/usr/share/elasticsearch/data
+      - cfp-devoxx-esdata:/usr/share/elasticsearch/data:rw
       - ./stores/elasticsearch/config:/usr/share/elasticsearch/config
   redis:
    image : redis:2.8.21
-   ports: ["6379:56379"]
+   ports: ["56379:6379"]
    volumes:
      - ./stores/redis:/var/lib/redis
 #   networks: ["private"]
+volumes:
+  cfp-devoxx-esdata:
+    driver: local
