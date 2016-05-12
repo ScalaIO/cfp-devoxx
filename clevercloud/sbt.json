@@ -1,5 +1,5 @@
 {
   "deploy":{
-    "goal": "-Dconfig.resource=cfp.conf"
+    "goal": "-Dconfig.resource=prod.conf"
   }
 }
