@@ -179,10 +179,9 @@ object ConferenceDescriptor {
   // TODO Configure here your Conference's tracks.
 
   def getConferenceTracksFromConfiguration = {
-    Play.current.configuration.getConfigList("cfp.tracks").map(
-      l => {
-        l.map(
-          t => (t.getString("id") :: t.getString("icon") :: Nil))
+    Play.current.configuration.getConfigList("cfp.tracks").map(tracks => {
+        tracks.map(
+          track => (track.getString("id") :: track.getString("icon") :: Nil))
           .collect({
             case Some(id) :: Some(icon) :: Nil => (Track(id, id + ".label"), TrackDesc(id, icon, "track." + id + ".title", "track." + id + ".desc"))
           }).toList

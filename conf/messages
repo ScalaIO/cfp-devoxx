@@ -169,6 +169,18 @@ appel.conf.dates=ScalaIO France 2016, 27th-28th October 2016
 
 track.java.title=Java, JVM, Javas SE/EE
 track.java.desc=Everything aroung Java, the JVM, Java SE, Java EE.
+
+bigdata_ml.label= BigData & MachineLearning
+bigdata_ml.leaderboard= BigData & MachineLearning
+functional_languages.label=Other Languages
+functional_languages.leaderboard=Other Languages
+scala_and_ecosystem.label=Scala & Ecosystem
+scala_and_ecosystem.leaderboard=Scala & Ecosystem
+typelevel_functional.label=Typelevel Functional Programming
+typelevel_functional.leaderboard=Typelevel Functional Programming
+university.label=Scala University
+university.leaderboard=Scala University
+
 java.label=Java, JVM, Javas SE/EE
 java.leaderboard=Java, JVM, Javas SE/EE
 
