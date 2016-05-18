@@ -33,6 +33,7 @@ object Global extends GlobalSettings {
         play.Logger.of("Global").warn("actor.cronUpdated.active is not active => no ElasticSearch or Stats updates")
     }
 
+    play.Logger.of("Global").info(s"cfp is open: ${Play.current.configuration.getBoolean("cfp.isOpen")}")
   }
 
   override def onError(request: RequestHeader, ex: Throwable) = {
