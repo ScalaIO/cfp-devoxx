@@ -83,7 +83,6 @@ object Backoffice extends SecureCFPController {
   // This endpoint is deliberately *not* secured in order to transform a user into an admin
   // only if there isn't any admin in the application
   def bootstrapAdminUser(uuid: String) = Action {
-    implicit request =>
       if (Webuser.noBackofficeAdmin()) {
         Webuser.addToBackofficeAdmin(uuid)
         Webuser.addToCFPAdmin(uuid)
@@ -93,9 +92,14 @@ object Backoffice extends SecureCFPController {
       }
   }
 
+  def addToBackofficeAdmin(uuid: String) = SecuredAction(IsMemberOf("admin")) {
+    Webuser.addToBackofficeAdmin(uuid)
+    Redirect(routes.Application.index()).flashing("success" -> "Your UUID has been configured as super-admin")
+  }
+
   def clearCaches() = SecuredAction(IsMemberOf("admin")) {
     implicit request: SecuredRequest[play.api.mvc.AnyContent] =>
-      Play.current.plugin[EhCachePlugin].foreach(p => p.manager.clearAll);
+      Play.current.plugin[EhCachePlugin].foreach(p => p.manager.clearAll())
       Ok(views.html.Backoffice.homeBackoffice())
   }
 

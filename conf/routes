@@ -33,6 +33,7 @@ POST          /visitors/validImported                                           
 
 # Turn a user to an admin if and only if there is no other ADMIN on your system (or if you deleted all admins)
 GET           /admin/bootstrapAdminUser                                         controllers.Backoffice.bootstrapAdminUser(uuid:String)
+POST          /admin/backofficeUsers                                            controllers.Backoffice.addToBackofficeAdmin(uuid:String)
 GET           /admin/clearCaches                                                controllers.Backoffice.clearCaches()
 
 
