@@ -99,7 +99,7 @@ lang=Langue
 lang.help=Si vous êtes francophone, merci de présenter en Français.
 mainSpeaker=Présentateur principal
 mainSpeaker.help=Vous avez la possibilité d''ajouter d''autres présentateurs une fois que la proposition est créé. Nous offrons une entrée à ScalaIO France pour les speakers.
-talkType.help=Chaque type de conférence est détaillé sur la page <a href="http://scala.io/faq.html" target="new">FAQ</a> du site ScalaIO France.
+talkType.help=Chaque type de conférence est détaillé sur la page <a href="http://scala.io/cfp.html" target="new">CFP</a> du site ScalaIO France.
 talkType=Type de présentation
 audienceLevel=Niveau de la présentation
 privateMessage=Message pour le comité de sélection
@@ -125,17 +125,17 @@ preview.warn2=dans le tableau de la page d''accueil.
 presubmit.reminder=Lorsque vous êtes prêt à soumettre votre proposition, n''oubliez pas de cliquer sur l''enveloppe orange sur l''écran principal (
 
 # Proposal type
-key.label=Keynote, 20mn, jeudi et vendredi matin
-conf.label=Conference, 45mn, jeudi et vendredi
-uni.label=University, 3h, mercredi uniquement
-tia.label=Tools in Action, 30mn, mercredi/jeudi
-quick.label=Quickie, 15mn, jeudi et vendredi midi
-amd.label=Après-midi des Décideurs, 30mn, jeudi après-midi
-bof.label=Bird of a Feather, 1h, jeudi soir uniquement
+key.label=Keynote
+conf.label=Conference, 45mn
+uni.label=University, 3h
+tia.label=Short Conference, 20mn
+quick.label=Lightning Talk, 10mn
+amd.label=Après-midi des Décideurs, 30mn
+bof.label=Bird of a Feather, 1h
 other.label=Autre type de présentation
-lab.label=Hands-on Lab, 3h, mercredi uniquement
+lab.label=Workshop, 3h
 hack.label=Hackaton (événement spécial)
-ignite.label=Conférence Ignite, 5mn, jeudi et vendredi de 13h à 14h
+ignite.label=Conférence Ignite, 5mn
 
 # Bug report
 Issue.report=Notifier l''équipe
@@ -558,7 +558,7 @@ key.label.simple=Plénière (Keynote)
 l1.label=niveau 1 : débutant
 l2.label=Intermédiaire
 l3.label=Expert et sénior
-lab.label.simple=Hands-on lab
+lab.label.simple=Workshop
 hack.label.simple=Hackatons
 code.label.simple=Codestory
 
@@ -599,7 +599,7 @@ start.label=
 start.label.simple=
 sw.hackatons=Hackatons
 table.pres.trash=Effacer cette proposition
-tia.label.simple=Tools in Action
+tia.label.simple=Short conference
 uni.label.simple=University
 unknown=Inconnu
 wishlist.cancelEdit=Retourner à votre liste de requêtes

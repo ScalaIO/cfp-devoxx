@@ -86,7 +86,7 @@ mainSpeaker2=Multiple Speakers?
 mainSpeaker.help=You can add more speakers once the proposal is created. We offer a full pass for speakers/
 otherSpeakers=Other speakers
 talkType=Type of talk
-talkType.help=Each type of talk is described on the <a href="http://scala.io/faq.html" target="new">FAQ</a>.
+talkType.help=Each type of talk is described on the <a href="http://scala.io/cfp.html" target="new">CFP</a>.
 
 audienceLevel=Audience level :
 audienceLevel.help=Please, indicate the required audience level for your talk:\
@@ -121,20 +121,20 @@ preview.warn2=in the main CFP screen.
 next.action=Select next action:
 
 # Proposal type
-key.label=Keynote, 20mn, Thursday and Friday
+key.label=Keynote
 key.label.simple=Keynote
-conf.label=Conference, 45mn, Thursday and Friday
+conf.label=Conference, 45mn
 conf.label.simple=Conference
 uni.label=University, 3h, Wednesday
 uni.label.simple=University
-tia.label=Tools in Action, 25mn, Wednesday or Thursday
-tia.label.simple=Tools in Action
-quick.label=Quickie, 15mn, Thursday and Friday, during lunch
-quick.label.simple=Quickie
+tia.label=Short Conference, 20mn
+tia.label.simple=Short Conference
+quick.label=Lightning talk, 10mn
+quick.label.simple=Lightning talk
 bof.label=Bird of a Feather, 1h, Thursday evening only
 bof.label.simple=Bird of a Feather
-lab.label=Hands-on Labs, 3h, Wednesday
-lab.label.simple=Hands-on Lab
+lab.label=Workshop, 3h
+lab.label.simple=Workshop
 other.label=Other event
 other.label.simple=Other
 start.label=Startup Talk, 25 min, Wednesday to Friday
@@ -443,9 +443,9 @@ sw.details=See details
 
 conf=Conference
 uni=University
-tia=Tools-in-Action
-lab=Hands-on Labs
-quick=Quickie
+tia=Short Conference
+lab=Workshop
+quick=Lightning talk
 bof=BOF (Bird of a Feather)
 hack=Hackaton
 key=Keynote
