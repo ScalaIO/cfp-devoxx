@@ -134,13 +134,12 @@ object ConferenceDescriptor {
 
     val OTHER = ProposalType(id = "other", label = "other.label")
 
-    val ALL = List(CONF, TIA, LAB, QUICK,KEY, OTHER)
+    val ALL: List[ProposalType] = List(CONF, TIA, LAB, QUICK, KEY, OTHER)
 
     def valueOf(id: String): ProposalType = id match {
-
       case "conf" => CONF
-      case "lab" => LAB
       case "tia" => TIA
+      case "lab" => LAB
       case "quick" => QUICK
       case "key" => KEY
       case "other" => OTHER
@@ -169,7 +168,7 @@ object ConferenceDescriptor {
     val OTHER = ProposalConfiguration(id = "other", slotsCount = 5, givesSpeakerFreeEntrance = false, freeEntranceDisplayed = false, htmlClass = "icon-microphone",
       hiddenInCombo = true, chosablePreferredDay = false)
 
-    val ALL = List(CONF, TIA, LAB, QUICK,  KEY)
+    val ALL = List(CONF, TIA, LAB, QUICK,  KEY, OTHER)
 
     def doesItGivesSpeakerFreeEntrance(proposalType: ProposalType): Boolean = {
       ALL.filter(_.id == proposalType.id).exists(_.givesSpeakerFreeEntrance)

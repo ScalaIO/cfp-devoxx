@@ -1,5 +1,7 @@
 package models
 
+import scala.collection.immutable.Seq
+
 import library.{Dress, Redis}
 import org.apache.commons.lang3.{RandomStringUtils, StringUtils}
 import org.joda.time.Instant
@@ -22,13 +24,12 @@ object ProposalType {
 
   val UNKNOWN = ProposalType(id = "unknown", label = "unknown.label")
 
-  val all = ConferenceDescriptor.ConferenceProposalTypes.ALL
-  val allAsId = all.map(a => (a.id, a.label)).toSeq.sorted
+  val all: List[ProposalType] = ConferenceDescriptor.ConferenceProposalTypes.ALL
+  val allAsId: Seq[(String, String)] = all.map(a => (a.id, a.label))
 
   def allForCombos = {
     val onlyThoseThatShouldBeDisplayed = all.filterNot(_ == UNKNOWN)
-    val finalFormat = onlyThoseThatShouldBeDisplayed.map(a => (a.id, a.label)).toSeq.sorted
-    finalFormat
+    onlyThoseThatShouldBeDisplayed.map(a => (a.id, a.label))
   }
 
   def allIDsOnly = allAsId.map(_._1)
