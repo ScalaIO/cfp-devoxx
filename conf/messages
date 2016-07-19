@@ -640,6 +640,7 @@ mail.speaker_cfp_results.subject=Call for Paper {0}
 
 proposal.audienceLevel=Audience level
 proposal.demoLevel=Type of presentation
+proposal.labels=Labels
 l1.label=level 1 : beginner/novice
 l2.label=Intermediate
 l3.label=Expert and senior

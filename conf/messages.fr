@@ -586,6 +586,7 @@ next.action=Sélectionnez l''action suivante :
 other.label.simple=autre
 proposal.audienceLevel=Niveau de l''audience
 proposal.demoLevel=Type de présentation
+proposal.labels=Labels
 qualifications=Vos qualifications/votre expérience comme présentateur
 qualifications.label=Qualifications du présentateur
 qualifications.otherproposals=Sujet(s) proposé(s) par le speaker

@@ -54,6 +54,16 @@
                                 <th>@Messages("proposal.demoLevel")</th>
                                 <td>@proposal.demoLevel.map(d=> Messages(d+".label"))</td>
                             </tr>
+                            <tr>
+                                <th>@Messages("proposal.labels")</th>
+                                <td>
+                                    @helper.form(action = routes.CFPAdmin.updateProposalLabels(proposal.id)) {
+                                     <input type="text" name="labels" value="@Proposal.readLabels(proposal.id).mkString(",")">
+                                     <input type="submit" value="Save">
+                                    }
+
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     <table class="table table-bordered">

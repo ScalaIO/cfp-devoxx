@@ -173,6 +173,18 @@ object CFPAdmin extends SecureCFPController {
       }
   }
 
+  val labelsForm: Form[String] = Form("labels" -> text)
+  def updateProposalLabels(proposalId: String) = SecuredAction(IsMemberOf("cfp")) { implicit request =>
+    val uuid = request.webuser.uuid
+    labelsForm.bindFromRequest.fold(
+      _ => Redirect(routes.CFPAdmin.openForReview(proposalId)).flashing("error"->"invalid labels"),
+      newLabels =>{
+        Proposal.updateLabels(proposalId, uuid, newLabels)
+        Redirect(routes.CFPAdmin.openForReview(proposalId)).flashing("success"->"lavels updated")
+      }
+    )
+  }
+
   val voteForm: Form[Int] = Form("vote" -> number(min = 0, max = 10))
 
   def voteForProposal(proposalId: String) = SecuredAction(IsMemberOf("cfp")) {

@@ -227,6 +227,33 @@ object Proposal {
       proposalId
   }
 
+  /**
+    * Updates the labels for a proposal
+    * Adds the new labels
+    * Removes the deleted labels
+    * @param proposalId
+    * @param uuid
+    * @param labels
+    * @return the current labels of the proposal
+    */
+  def updateLabels(proposalId:String, uuid:String, labels:String):Set[String]=Redis.pool.withClient {
+    implicit client =>
+      val key = "Proposals:labels:" + proposalId
+      val currentLabels = client.smembers(key)
+      val inputLabels = labels.split(",").map(_.trim).toSet
+      val droppedlabels= currentLabels.diff(inputLabels)
+      val newlabels= inputLabels.diff(currentLabels)
+      val unchangedLabels= inputLabels.intersect(currentLabels)
+      if(droppedlabels.nonEmpty) client.srem(key, droppedlabels)
+      if(newlabels.nonEmpty) client.sadd(key, newlabels.toArray:_*)
+      Event.storeEvent(Event(proposalId, uuid, s"Updated proposal labels (added ${newlabels.mkString("[",",","]")}, removed ${droppedlabels.mkString("[",",","]")}, unchanged ${unchangedLabels.mkString("[",",","]")}"))
+      client.smembers(key)
+  }
+
+  def readLabels(proposalId:String):Set[String]=Redis.pool.withClient {
+    implicit client =>
+      client.smembers("Proposals:labels:"+proposalId)
+  }
   val proposalForm = Form(mapping(
     "id" -> optional(text)
     , "lang" -> text

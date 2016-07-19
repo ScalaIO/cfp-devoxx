@@ -19,9 +19,11 @@ services:
       - ./stores/elasticsearch/config:/usr/share/elasticsearch/config
   redis:
    image : redis:2.8.21
+#   command: redis-server /usr/local/etc/redis/redis.conf
    ports: ["56379:6379"]
    volumes:
-     - ./stores/redis:/var/lib/redis
+     - ./stores/redis/data:/var/lib/redis
+#     - ./stores/redis/redis.conf:/usr/local/etc/redis/redis.conf
 #   networks: ["private"]
 volumes:
   cfp-devoxx-esdata:
