@@ -251,8 +251,7 @@ object RestAPI extends Controller {
 
   def showTalk(eventCode: String, proposalId: String) = UserAgentActionAndAllowOrigin {
     implicit request =>
-      Proposal.findById(proposalId).map {
-        proposal =>
+      Proposal.findById(proposalId).map { proposal =>
           val etag = proposal.hashCode.toString
 
           request.headers.get(IF_NONE_MATCH) match {
@@ -274,6 +273,7 @@ object RestAPI extends Controller {
                   "summaryAsHtml" -> Json.toJson(proposal.summaryAsHtml),
                   "track" -> Json.toJson(Messages(proposal.track.label)),
                   "trackId" -> Json.toJson(proposal.track.id),
+                  "labels" -> Json.toJson(Proposal.readLabels(proposal.id)),
                   "speakers" -> Json.toJson(allSpeakers.map {
                     speaker =>
                       Map(
@@ -298,7 +298,7 @@ object RestAPI extends Controller {
 
   def showApprovedTalks(eventCode: String) = UserAgentActionAndAllowOrigin {
     implicit request =>
-      import models.Proposal.proposalFormat
+      import models.Proposal.proposalWithLabelWrites
 
       // TODO filter on the specified eventCode and not on stupidEventCode when Proposal is updated
       // We cannot right now, as we stored the Proposal with event==Message("longYearlyName") See Proposal.scala in validateNEwProposal
@@ -306,7 +306,7 @@ object RestAPI extends Controller {
       // val proposals = ApprovedProposal.allApproved().filterNot(_.event==eventCode).toList.sortBy(_.title)
 
       val stupidEventCode = Messages("longYearlyName") // Because the value in the DB for Devoxx BE 2015 is not valid
-      val proposals = ApprovedProposal.allApproved().filter(_.event == stupidEventCode).toList.sortBy(_.title)
+      val proposals = ApprovedProposal.allApproved().filter(_.event == eventCode).map(proposal => ProposalWithLabels(proposal, Proposal.readLabels(proposal.id))).toList.sortBy(_.title)
 
       val etag = proposals.hashCode.toString
 
@@ -317,16 +317,18 @@ object RestAPI extends Controller {
         case other => {
 
           val proposalsWithSpeaker = proposals.map {
-            p: Proposal =>
-              val mainWebuser = Speaker.findByUUID(p.mainSpeaker)
-              val secWebuser = p.secondarySpeaker.flatMap(Speaker.findByUUID(_))
-              val oSpeakers = p.otherSpeakers.map(Speaker.findByUUID(_))
-              val preferredDay = Proposal.getPreferredDay(p.id)
+            p: ProposalWithLabels =>
+              val mainWebuser = Speaker.findByUUID(p.proposal.mainSpeaker)
+              val secWebuser = p.proposal.secondarySpeaker.flatMap(Speaker.findByUUID(_))
+              val oSpeakers = p.proposal.otherSpeakers.map(Speaker.findByUUID(_))
+              val preferredDay = Proposal.getPreferredDay(p.proposal.id)
 
               // Transform speakerUUID to Speaker name, this simplify Angular Code
               p.copy(
-                mainSpeaker = mainWebuser.map(_.cleanName).getOrElse(""), secondarySpeaker = secWebuser.map(_.cleanName), otherSpeakers = oSpeakers.flatMap(s => s.map(_.cleanName)), privateMessage = preferredDay.getOrElse(""))
-
+                proposal=p.proposal.copy(
+                mainSpeaker = mainWebuser.map(_.cleanName).getOrElse(""), secondarySpeaker = secWebuser.map(_.cleanName), otherSpeakers = oSpeakers.flatMap(s => s.map(_.cleanName)), privateMessage = preferredDay.getOrElse("")
+                )
+              )
           }
 
           val finalJson = Map(

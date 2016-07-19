@@ -8,7 +8,7 @@ import org.joda.time.Instant
 import play.api.data.Forms._
 import play.api.data._
 import play.api.i18n.Messages
-import play.api.libs.json.Json
+import play.api.libs.json._
 import play.api.templates.HtmlFormat
 
 /**
@@ -117,6 +117,10 @@ object ProposalState {
 
 import com.github.rjeschke.txtmark._
 
+case class ProposalWithLabels(proposal:Proposal,labels:Set[String]){
+  val title = proposal.title
+  val state = proposal.state
+}
 // A proposal
 case class Proposal(id: String,
                     event: String,
@@ -171,6 +175,10 @@ case class Proposal(id: String,
 object Proposal {
 
   implicit val proposalFormat = Json.format[Proposal]
+  implicit val proposalWithLabelWrites = new OWrites[ProposalWithLabels]{
+    override def writes(o: ProposalWithLabels): JsObject=
+      proposalFormat.writes(o.proposal).as[JsObject] + ("labels" -> Json.toJson(o.labels))
+  }
 
   val langs = Seq(("en", "English"), ("fr", "Français"))
 

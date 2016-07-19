@@ -273,9 +273,8 @@ object ApprovedProposal {
   def allApproved(): Set[Proposal] = Redis.pool.withClient {
     implicit client =>
       val allKeys = client.keys("Approved:*")
-      val finalList = allKeys.map {
-        key =>
-          val allProposalIDs = client.smembers(key).diff(client.smembers(s"Proposals:ByState:${ProposalState.ARCHIVED.code}")).toList
+      val finalList = allKeys.map { key =>
+        val allProposalIDs = client.smembers(key).diff(client.smembers(s"Proposals:ByState:${ProposalState.ARCHIVED.code}")).toList
           val allProposalWithVotes = Proposal.loadAndParseProposals(allProposalIDs.toSet)
           allProposalWithVotes.values.toList
       }.flatten
