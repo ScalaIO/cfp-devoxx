@@ -149,9 +149,9 @@ object RestAPI extends Controller {
     implicit request =>
 
       // First load published slots
-      val publishedConf =  ScheduleConfiguration.loadAllPublishedSlots().filter(_.proposal.isDefined)
+      val publishedConf = ApprovedProposal.allApproved().filter(_.event == eventCode)
 
-      val allSpeakersIDs = publishedConf.flatMap(_.proposal.get.allSpeakerUUIDs).toSet
+      val allSpeakersIDs = publishedConf.flatMap(_.allSpeakerUUIDs)
 
       val etag = allSpeakersIDs.hashCode.toString
 
