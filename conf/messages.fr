@@ -293,7 +293,7 @@ noOther.speaker=---- Pas d''autre présentateur ----
 # short talk
 conf=Conference
 uni=University
-tia=Tools-in-Action
+tia=Short conference
 lab=Hands-on Labs
 quick=Quickie
 bof=BOF (Bird of a Feather)
@@ -439,7 +439,7 @@ sw.all.conf=Toutes les conférences
 sw.all.lab=Tous les hand''s on labs
 sw.all.quick=Tous les quickies
 sw.all.bof=Toutes les BOFs
-sw.all.tia=Tous les tools in Action
+sw.all.tia=Toutes les short conferences
 sw.speakers=Présentateurs
 sw.intro=Le programme ainsi que l''agenda sont mis à jour régulièrement.
 sw.programme=Programme
