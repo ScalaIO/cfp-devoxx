@@ -124,6 +124,8 @@ GET           /admin/cleanUpVotesIfUserWasDeleted                               
 GET           /admin/deleteAllVotes                                             controllers.Backoffice.deleteVotesForPropal(proposalId:String)
 GET           /admin/submittedByDate                                            controllers.Backoffice.submittedByDate()
 
+GET           /admin/export/allSpeakers                                         controllers.Backoffice.speakersCsvExport()
+
 # Authenticate and admin as a regular user
 GET           /admin/authenticateAs/:uuid                                       controllers.Backoffice.authenticateAs(uuid:String)
 GET           /admin/authenticateAndCreate/:uuid                                controllers.Backoffice.authenticateAndCreateTalk(uuid:String)

@@ -284,5 +284,10 @@ object Backoffice extends SecureCFPController {
       Ok(views.html.Backoffice.showAllDeclined(allDeclined))
 
   }
-
+  def speakersCsvExport()= SecuredAction(IsMemberOf("admin")) { implicit request =>
+    val lines = Speaker.allSpeakers().map(s => Seq(s.firstName, s.name, s.email).mkString(","))
+    val header = "firstname, lastname, email"
+    val csv = (header ++ lines).mkString("\n")
+    Ok(csv).withHeaders("Content-type"->"text/csv", "Content-Disposition"->"attachment; filename=allspeakers.csv")
+  }
 }
