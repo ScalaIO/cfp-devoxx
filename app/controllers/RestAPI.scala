@@ -25,12 +25,11 @@ package controllers
 
 import library.Benchmark
 import models._
-import org.joda.time.{ DateTime, DateTimeZone }
+import org.joda.time.{DateTime, DateTimeZone}
 import play.api.i18n.Messages
-import play.api.libs.json.{ JsNull, Json }
-import play.api.mvc.{ SimpleResult, _ }
-
-import scala.concurrent.{ ExecutionContext, Future }
+import play.api.libs.json.{JsNull, JsValue, Json}
+import play.api.mvc.{SimpleResult, _}
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * A real REST api for men.
@@ -293,9 +292,56 @@ object RestAPI extends Controller {
 
   def redirectToTalks(eventCode: String) = UserAgentActionAndAllowOrigin {
     implicit request =>
-      Redirect(routes.RestAPI.showApprovedTalks(eventCode))
+      Redirect(routes.RestAPI.showTalks(eventCode))
   }
 
+  def toJson(eventCode:String,proposal: Proposal,allSpeakers: List[Speaker])(implicit req:RequestHeader): Map[String, JsValue] = {
+    val updatedProposal =
+      Map(
+        "id" -> Json.toJson(proposal.id),
+        "title" -> Json.toJson(proposal.title),
+        "lang" -> Json.toJson(proposal.lang),
+        "summaryAsHtml" -> Json.toJson(proposal.summaryAsHtml),
+        "summary" -> Json.toJson(proposal.summary),
+        "audienceLevel" -> Json.toJson(Messages(proposal.audienceLevel+".label")),
+        "track" -> Json.toJson(Messages(proposal.track.label)),
+        "talkType" -> Json.toJson(Messages(proposal.talkType.id)),
+        "speakers" -> Json.toJson(allSpeakers.map {
+          speaker =>
+            Map(
+              "link" -> Json.toJson(
+                Link(
+                  routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
+                  routes.RestAPI.profile("speaker").absoluteURL().toString,
+                  speaker.cleanName
+                )
+              ),
+              "name" -> Json.toJson(speaker.cleanName),
+              "company" -> Json.toJson(speaker.company),
+              "twitter" -> Json.toJson(speaker.twitter),
+              "id" -> Json.toJson(speaker.uuid)
+            )
+        })
+      )
+    updatedProposal
+  }
+
+  def showTalks(eventCode: String) = UserAgentActionAndAllowOrigin { implicit request =>
+    val ifNoneMatch = request.headers.get(IF_NONE_MATCH)
+    val (keynotes, talks)=Proposal.allAccepted().partition(_.talkType==ConferenceDescriptor.ConferenceProposalTypes.KEY)
+    val toReturn= for {
+      proposal <- keynotes ++ talks
+    } yield {
+      val allSpeakers: List[Speaker] = proposal.allSpeakerUUIDs.flatMap {
+        uuid => Speaker.findByUUID(uuid)
+      }
+      toJson(eventCode,proposal, allSpeakers)
+    }
+
+    val jsonObject =Json.toJson(toReturn)
+
+    Ok(jsonObject).as(JSON).withHeaders(ETAG -> toReturn.hashCode().toString, "Links" -> ("<" + routes.RestAPI.profile("schedule").absoluteURL().toString + ">; rel=\"profile\""))
+  }
   def showApprovedTalks(eventCode: String) = UserAgentActionAndAllowOrigin {
     implicit request =>
       import models.Proposal.proposalWithLabelWrites
