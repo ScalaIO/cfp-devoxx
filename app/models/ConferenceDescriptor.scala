@@ -283,12 +283,19 @@ object ConferenceDescriptor {
 
 
       val toolsFridayAfternoonSlot2 = ConferenceRooms.allRoomsShortConfFri.map {
-        r1 =>
+        r2 =>
           SlotBuilder(ConferenceProposalTypes.TIA.id, "friday",
             new DateTime("2016-10-27T13:00:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")),
-            new DateTime("2016-10-27T13:20:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r1)
+            new DateTime("2016-10-27T13:20:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r2)
       }
-      toolsFridayAfternoonSlot1 ++ toolsFridayAfternoonSlot2
+
+      val toolsFridayAfternoonSlot3 = List(ConferenceRooms.BARBARA_LISKOV).map {
+        r3 =>
+          SlotBuilder(ConferenceProposalTypes.TIA.id, "friday",
+            new DateTime("2016-10-27T16:45:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")),
+            new DateTime("2016-10-27T17:05:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r3)
+      }
+      toolsFridayAfternoonSlot1 ++ toolsFridayAfternoonSlot2 ++toolsFridayAfternoonSlot3
     }
 
 
@@ -444,26 +451,26 @@ object ConferenceDescriptor {
             new DateTime("2016-10-28T12:15:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r2)
       }
 
-      val conferenceFridaySlot3 = ConferenceRooms.allRoomsConf.filter(r => r != ConferenceRooms.GRACE_HOPPER && r != ConferenceRooms.LYNN_CONNWAY) map {
+      val conferenceFridaySlot3 = ConferenceRooms.allRoomsConf.filter(r => r != ConferenceRooms.GRACE_HOPPER && r != ConferenceRooms.LYNN_CONNWAY).map {
         r3 =>
           SlotBuilder(ConferenceProposalTypes.CONF.id, "friday",
             new DateTime("2016-10-28T12:30:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")),
             new DateTime("2016-10-28T13:15:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r3)
       }
 
-      val conferenceFridaySlot4 = ConferenceRooms.allRoomsConf.map {
+      val conferenceFridaySlot4 = ConferenceRooms.allRoomsConf.filter(_ != ConferenceRooms.LYNN_CONNWAY).map {
         r4 =>
           SlotBuilder(ConferenceProposalTypes.CONF.id, "friday",
             new DateTime("2016-10-28T14:30:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")),
             new DateTime("2016-10-28T15:15:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r4)
       }
-      val conferenceFridaySlot5 = ConferenceRooms.allRoomsConf.map {
+      val conferenceFridaySlot5 = ConferenceRooms.allRoomsConf.filter(_ != ConferenceRooms.LYNN_CONNWAY).map {
         r5 =>
           SlotBuilder(ConferenceProposalTypes.CONF.id, "friday",
             new DateTime("2016-10-28T15:30:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")),
             new DateTime("2016-10-28T16:15:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r5)
       }
-      val conferenceFridaySlot6 = ConferenceRooms.allRoomsConf.map {
+      val conferenceFridaySlot6 = ConferenceRooms.allRoomsConf.filter(_ != ConferenceRooms.LYNN_CONNWAY).map {
         r6 =>
           SlotBuilder(ConferenceProposalTypes.CONF.id, "friday",
             new DateTime("2016-10-28T16:45:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")),
