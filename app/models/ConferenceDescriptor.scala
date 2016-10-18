@@ -438,7 +438,7 @@ object ConferenceDescriptor {
         r3 =>
           SlotBuilder(ConferenceProposalTypes.CONF.id, "friday",
             new DateTime("2016-10-28T12:30:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")),
-            new DateTime("2016-10-28T13:15:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r)
+            new DateTime("2016-10-28T13:15:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r3)
       }
 
       val conferenceFridaySlot4 = ConferenceRooms.allRoomsConf.map {
@@ -453,14 +453,14 @@ object ConferenceDescriptor {
             new DateTime("2016-10-28T15:30:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")),
             new DateTime("2016-10-28T16:15:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r5)
       }
-      val conferenceFridaySlot5 = ConferenceRooms.allRoomsConf.map {
+      val conferenceFridaySlot6 = ConferenceRooms.allRoomsConf.map {
         r6 =>
           SlotBuilder(ConferenceProposalTypes.CONF.id, "friday",
             new DateTime("2016-10-28T16:45:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")),
             new DateTime("2016-10-28T17:30:00.000+02:00").toDateTime(DateTimeZone.forID("Europe/Paris")), r6)
       }
 
-      conferenceFridaySlot1  ++ conferenceFridaySlot2 ++conferenceFridaySlot3 ++ conferenceFridaySlot4
+      conferenceFridaySlot1  ++ conferenceFridaySlot2 ++conferenceFridaySlot3 ++ conferenceFridaySlot4++ conferenceFridaySlot5++ conferenceFridaySlot6
     }
 
     // Registration, coffee break, lunch etc
