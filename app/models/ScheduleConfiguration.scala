@@ -133,8 +133,6 @@ object ScheduleConfiguration {
     }
 
     val listOfSlots = day match {
-      case "wednesday" =>
-        extractSlot(ConferenceDescriptor.ConferenceSlots.wednesday, "wednesday")
       case "thursday" =>
         extractSlot(ConferenceDescriptor.ConferenceSlots.thursday, "thursday")
       case "friday" =>
