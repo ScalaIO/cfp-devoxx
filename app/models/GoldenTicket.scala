@@ -34,7 +34,7 @@ import play.api.libs.json.Json
 case class GoldenTicket(id: String, ticketId: String, webuserUUID: String, ticketType: String)
 
 object GoldenTicket {
-  val GD_TICKET = "GoldenTicket:2016"
+  val GD_TICKET = "GoldenTicket:2017"
 
   implicit val goldenTicketFormat = Json.format[GoldenTicket]
 
