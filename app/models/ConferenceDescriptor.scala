@@ -524,8 +524,8 @@ object ConferenceDescriptor {
 
   def dateRange(from: DateTime, to: DateTime, step: Period): Iterator[DateTime] = Iterator.iterate(from)(_.plus(step)).takeWhile(!_.isAfter(to))
 
-  val fromDay = new DateTime().withYear(2016).withMonthOfYear(10).withDayOfMonth(27)
-  val toDay = new DateTime().withYear(2016).withMonthOfYear(10).withDayOfMonth(28)
+  val fromDay = new DateTime().withYear(2017).withMonthOfYear(11).withDayOfMonth(2)
+  val toDay = new DateTime().withYear(2017).withMonthOfYear(11).withDayOfMonth(3)
 
   // TODO You might want to start here and configure first, your various Conference Elements
   def current() = ConferenceDescriptor(
@@ -544,20 +544,20 @@ object ConferenceDescriptor {
       cfpHostname = Play.current.configuration.getString("cfp.hostname").getOrElse("cfp.scala.io")
     ),
     timing = ConferenceTiming(
-      datesI18nKey = "27 et 28 Octobre 2016",
+      datesI18nKey = "2nd and 3rd November 2017",
       speakersPassDuration = 5,
       preferredDayEnabled = true,
-      firstDayFr = "27 Octobre",
-      firstDayEn = "October 27th",
-      datesFr = "du 27 au 28 octobre 2016",
-      datesEn = "from 27th to 28th of October, 2016",
-      cfpOpenedOn = DateTime.parse("2016-05-19T00:00:00+02:00"),
-      cfpClosedOn = DateTime.parse("2016-09-05T09:00:00+02:00"),
-      scheduleAnnouncedOn = DateTime.parse("2016-09-15T00:00:00+02:00"),
+      firstDayFr = "2 Novembre",
+      firstDayEn = "November 2nd",
+      datesFr = "du 2 au 3 Novembre 2017",
+      datesEn = "from 2nd to 3rd November, 2017",
+      cfpOpenedOn = DateTime.parse("2017-05-16T00:00:00+02:00"),
+      cfpClosedOn = DateTime.parse("2017-09-08T00:00:00+02:00"),
+      scheduleAnnouncedOn = DateTime.parse("2017-09-15T00:00:00+02:00"),
       days = dateRange(fromDay, toDay, new Period().withDays(1))
     ),
     hosterName = "Clever-cloud", hosterWebsite = "http://www.clever-cloud.com/#ScalaIO",
-    hashTag = "#Scalaio16",
+    hashTag = "#Scalaio17",
     conferenceSponsor = ConferenceSponsor(showSponsorProposalCheckbox = true, sponsorProposalType = ConferenceProposalTypes.CONF)
     , List(Locale.FRENCH, Locale.ENGLISH)
     , "CPE, Lyon"
