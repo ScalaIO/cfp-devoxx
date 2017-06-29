@@ -34,23 +34,32 @@ object ArchiveProposal {
   def pruneAllDeleted(): Int = {
     Proposal.allDeleted().foldLeft(0) {
       (cpt: Int, proposal: Proposal) =>
-        Proposal.destroy(proposal)
-        cpt + 1
+        if(proposal.event!=ConferenceDescriptor.current().eventCode){
+          Proposal.destroy(proposal)
+          cpt + 1
+        }else{
+          cpt
+        }
     }
   }
 
   def pruneAllDraft(): Int = {
     Proposal.allDrafts().foldLeft(0) {
       (cpt: Int, proposal: Proposal) =>
-        Proposal.destroy(proposal)
-        cpt + 1
+        if(proposal.event!=ConferenceDescriptor.current().eventCode){
+          Proposal.destroy(proposal)
+          cpt + 1
+        }else{
+          cpt
+        }
     }
   }
 
   def archiveAll(proposalTypeId: String):Int = {
     val proposalType = ConferenceDescriptor.ConferenceProposalTypes.valueOf(proposalTypeId)
     val ids=Proposal.allProposalIDsNotArchived
-    val proposals = Proposal.loadAndParseProposals(ids).values
+    val allproposals = Proposal.loadAndParseProposals(ids).values
+    val proposals = Proposal.loadAndParseProposals(ids).values.filter(_.event!= ConferenceDescriptor.current().eventCode)
 
     // First, check that the approval category is ok (bug #159 on old talks)
     // Rely on the current proposal talkType
