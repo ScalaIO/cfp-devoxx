@@ -31,11 +31,15 @@ import play.api.libs.json.{JsNull, JsValue, Json}
 import play.api.mvc.{SimpleResult, _}
 import scala.concurrent.{ExecutionContext, Future}
 
+import controllers.Authentication.USE_HTTPS
+import play.api.Play
+
 /**
   * A real REST api for men.
   * Created by Nicolas Martignole on 25/02/2014.
   */
 object RestAPI extends Controller {
+  private val USE_HTTPS = Play.current.configuration.getBoolean("cfp.activateHTTPS").getOrElse(true)
 
   def index = UserAgentActionAndAllowOrigin {
     implicit request =>
@@ -83,7 +87,7 @@ object RestAPI extends Controller {
                     conference.link
                 }
               }))
-          Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("conferences").absoluteURL().toString + ">; rel=\"profile\""))
+          Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("conferences").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
         }
       }
   }
@@ -126,18 +130,18 @@ object RestAPI extends Controller {
 
                   "links" -> Json.toJson(List(
                     Link(
-                      routes.RestAPI.showSpeakers(conference.eventCode).absoluteURL(),
-                      routes.RestAPI.profile("list-of-speakers").absoluteURL(),
+                      routes.RestAPI.showSpeakers(conference.eventCode).absoluteURL(USE_HTTPS),
+                      routes.RestAPI.profile("list-of-speakers").absoluteURL(USE_HTTPS),
                       "See all speakers"),
                     Link(
-                      routes.RestAPI.showAllSchedules(conference.eventCode).absoluteURL(),
-                      routes.RestAPI.profile("schedules").absoluteURL(),
+                      routes.RestAPI.showAllSchedules(conference.eventCode).absoluteURL(USE_HTTPS),
+                      routes.RestAPI.profile("schedules").absoluteURL(USE_HTTPS),
                       "See the whole agenda"),
                     Link(
-                      routes.RestAPI.showProposalTypes(conference.eventCode).absoluteURL(),
-                      routes.RestAPI.profile("proposalType").absoluteURL(),
+                      routes.RestAPI.showProposalTypes(conference.eventCode).absoluteURL(USE_HTTPS),
+                      routes.RestAPI.profile("proposalType").absoluteURL(USE_HTTPS),
                       "See the different kind of conferences")))))
-              Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("conference").absoluteURL().toString + ">; rel=\"profile\""))
+              Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("conference").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
             }
           }
       }.getOrElse(NotFound("Conference not found"))
@@ -173,15 +177,15 @@ object RestAPI extends Controller {
                 "company" -> speaker.company.map(u => Json.toJson(u.trim())).getOrElse(JsNull),
                 "links" -> Json.toJson(List(
 
-                  Link(routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
-                    routes.RestAPI.profile("speaker").absoluteURL().toString,
+                  Link(routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL(USE_HTTPS),
+                    routes.RestAPI.profile("speaker").absoluteURL(USE_HTTPS),
                     speaker.cleanName))))
           }
 
           val jsonObject = Json.toJson(updatedSpeakers)
 
           Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag,
-            "Links" -> ("<" + routes.RestAPI.profile("list-of-speakers").absoluteURL().toString + ">; rel=\"profile\""))
+            "Links" -> ("<" + routes.RestAPI.profile("list-of-speakers").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
         }
       }
   }
@@ -211,8 +215,8 @@ object RestAPI extends Controller {
                     uuid => Speaker.findByUUID(uuid)
                   }.map {
                     speaker =>
-                      Link(routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
-                        routes.RestAPI.profile("speaker").absoluteURL().toString,
+                      Link(routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL(USE_HTTPS),
+                        routes.RestAPI.profile("speaker").absoluteURL(USE_HTTPS),
                         speaker.cleanName)
                   }
 
@@ -223,8 +227,8 @@ object RestAPI extends Controller {
                     "talkType" -> Json.toJson(Messages(proposal.talkType.id)),
                     "links" -> Json.toJson(
                       List(
-                        Link(routes.RestAPI.showTalk(eventCode, proposal.id).absoluteURL().toString,
-                          routes.RestAPI.profile("talk").absoluteURL().toString, "More details about this talk")).++(allSpeakers)))
+                        Link(routes.RestAPI.showTalk(eventCode, proposal.id).absoluteURL(USE_HTTPS),
+                          routes.RestAPI.profile("talk").absoluteURL(USE_HTTPS), "More details about this talk")).++(allSpeakers)))
               }
 
               val updatedSpeaker =
@@ -242,7 +246,7 @@ object RestAPI extends Controller {
                   "acceptedTalks" -> Json.toJson(updatedTalks))
 
               val jsonObject = Json.toJson(updatedSpeaker)
-              Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("speaker").absoluteURL().toString + ">; rel=\"profile\""))
+              Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("speaker").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
             }
           }
       }.getOrElse(NotFound("Speaker not found"))
@@ -278,8 +282,8 @@ object RestAPI extends Controller {
                       Map(
                         "link" -> Json.toJson(
                           Link(
-                            routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
-                            routes.RestAPI.profile("speaker").absoluteURL().toString,
+                            routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL(USE_HTTPS),
+                            routes.RestAPI.profile("speaker").absoluteURL(USE_HTTPS),
                             speaker.cleanName)),
                         "name" -> Json.toJson(speaker.cleanName))
                   }))
@@ -311,8 +315,8 @@ object RestAPI extends Controller {
             Map(
               "link" -> Json.toJson(
                 Link(
-                  routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
-                  routes.RestAPI.profile("speaker").absoluteURL().toString,
+                  routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL(USE_HTTPS),
+                  routes.RestAPI.profile("speaker").absoluteURL(USE_HTTPS),
                   speaker.cleanName
                 )
               ),
@@ -340,7 +344,7 @@ object RestAPI extends Controller {
 
     val jsonObject =Json.toJson(toReturn)
 
-    Ok(jsonObject).as(JSON).withHeaders(ETAG -> toReturn.hashCode().toString, "Links" -> ("<" + routes.RestAPI.profile("schedule").absoluteURL().toString + ">; rel=\"profile\""))
+    Ok(jsonObject).as(JSON).withHeaders(ETAG -> toReturn.hashCode().toString, "Links" -> ("<" + routes.RestAPI.profile("schedule").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
   }
   def showApprovedTalks(eventCode: String) = UserAgentActionAndAllowOrigin {
     implicit request =>
@@ -386,7 +390,7 @@ object RestAPI extends Controller {
           val jsonObject = Json.toJson(finalJson)
 
           Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag,
-            "Links" -> ("<" + routes.RestAPI.profile("list-of-approved-talks").absoluteURL().toString + ">; rel=\"profile\""))
+            "Links" -> ("<" + routes.RestAPI.profile("list-of-approved-talks").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
         }
       }
 
@@ -399,23 +403,23 @@ object RestAPI extends Controller {
       val mapOfSchedules = Map(
         "links" -> Json.toJson(List(
           Link(
-            routes.RestAPI.showScheduleFor(eventCode, "monday").absoluteURL().toString,
-            routes.RestAPI.profile("schedule").absoluteURL().toString,
+            routes.RestAPI.showScheduleFor(eventCode, "monday").absoluteURL(USE_HTTPS),
+            routes.RestAPI.profile("schedule").absoluteURL(USE_HTTPS),
             "Schedule for Monday 10th November 2015"), Link(
-            routes.RestAPI.showScheduleFor(eventCode, "tuesday").absoluteURL().toString,
-            routes.RestAPI.profile("schedule").absoluteURL().toString,
+            routes.RestAPI.showScheduleFor(eventCode, "tuesday").absoluteURL(USE_HTTPS),
+            routes.RestAPI.profile("schedule").absoluteURL(USE_HTTPS),
             "Schedule for Tuesday 11th November 2015"),
           Link(
-            routes.RestAPI.showScheduleFor(eventCode, "wednesday").absoluteURL().toString,
-            routes.RestAPI.profile("schedule").absoluteURL().toString,
+            routes.RestAPI.showScheduleFor(eventCode, "wednesday").absoluteURL(USE_HTTPS),
+            routes.RestAPI.profile("schedule").absoluteURL(USE_HTTPS),
             "Schedule for Wednesday 12th November 2015"),
           Link(
-            routes.RestAPI.showScheduleFor(eventCode, "thursday").absoluteURL().toString,
-            routes.RestAPI.profile("schedule").absoluteURL().toString,
+            routes.RestAPI.showScheduleFor(eventCode, "thursday").absoluteURL(USE_HTTPS),
+            routes.RestAPI.profile("schedule").absoluteURL(USE_HTTPS),
             "Schedule for Thursday 13th November 2015"),
           Link(
-            routes.RestAPI.showScheduleFor(eventCode, "friday").absoluteURL().toString,
-            routes.RestAPI.profile("schedule").absoluteURL().toString,
+            routes.RestAPI.showScheduleFor(eventCode, "friday").absoluteURL(USE_HTTPS),
+            routes.RestAPI.profile("schedule").absoluteURL(USE_HTTPS),
             "Schedule for Friday 14th November 2015"))))
       val newEtag = mapOfSchedules.hashCode().toString
 
@@ -423,7 +427,7 @@ object RestAPI extends Controller {
         case Some(someEtag) if someEtag == newEtag => NotModified
         case other => {
           val jsonObject = Json.toJson(mapOfSchedules)
-          Ok(jsonObject).as(JSON).withHeaders(ETAG -> newEtag, "Links" -> ("<" + routes.RestAPI.profile("schedules").absoluteURL().toString + ">; rel=\"profile\""))
+          Ok(jsonObject).as(JSON).withHeaders(ETAG -> newEtag, "Links" -> ("<" + routes.RestAPI.profile("schedules").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
         }
       }
   }
@@ -460,8 +464,8 @@ object RestAPI extends Controller {
                           Map(
                             "link" -> Json.toJson(
                               Link(
-                                routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
-                                routes.RestAPI.profile("speaker").absoluteURL().toString,
+                                routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL(USE_HTTPS),
+                                routes.RestAPI.profile("speaker").absoluteURL(USE_HTTPS),
                                 speaker.cleanName)),
                             "name" -> Json.toJson(speaker.cleanName))
                       }))
@@ -477,7 +481,7 @@ object RestAPI extends Controller {
           val jsonObject = Json.toJson(
             Map(
               "slots" -> Json.toJson(toReturn)))
-          Ok(jsonObject).as(JSON).withHeaders(ETAG -> newEtag, "Links" -> ("<" + routes.RestAPI.profile("schedule").absoluteURL().toString + ">; rel=\"profile\""))
+          Ok(jsonObject).as(JSON).withHeaders(ETAG -> newEtag, "Links" -> ("<" + routes.RestAPI.profile("schedule").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
         }
       }
 
@@ -504,7 +508,7 @@ object RestAPI extends Controller {
               "content" -> Json.toJson("All types of proposal"),
               "proposalTypes" -> Json.toJson(allProposalTypes)))
 
-          Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("proposalType").absoluteURL().toString + ">; rel=\"profile\""))
+          Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("proposalType").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
         }
       }
   }
@@ -530,7 +534,7 @@ object RestAPI extends Controller {
               "content" -> Json.toJson("All tracks"),
               "tracks" -> Json.toJson(allTracks)))
 
-          Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("track").absoluteURL().toString + ">; rel=\"profile\""))
+          Ok(jsonObject).as(JSON).withHeaders(ETAG -> etag, "Links" -> ("<" + routes.RestAPI.profile("track").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
         }
       }
   }
@@ -559,7 +563,7 @@ object RestAPI extends Controller {
           Ok(jsonObject).as(JSON).withHeaders(
             ETAG -> etag,
             "Access-Control-Allow-Origin" -> "*",
-            "Links" -> ("<" + routes.RestAPI.profile("room").absoluteURL() + ">; rel=\"profile\""))
+            "Links" -> ("<" + routes.RestAPI.profile("room").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
         }
       }
   }
@@ -596,8 +600,8 @@ object RestAPI extends Controller {
                           Map(
                             "link" -> Json.toJson(
                               Link(
-                                routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL().toString,
-                                routes.RestAPI.profile("speaker").absoluteURL().toString,
+                                routes.RestAPI.showSpeaker(eventCode, speaker.uuid).absoluteURL(USE_HTTPS),
+                                routes.RestAPI.profile("speaker").absoluteURL(USE_HTTPS),
                                 speaker.cleanName)),
                             "name" -> Json.toJson(speaker.cleanName))
                       }))
@@ -613,7 +617,7 @@ object RestAPI extends Controller {
           val jsonObject = Json.toJson(
             Map(
               "slots" -> Json.toJson(toReturn)))
-          Ok(jsonObject).as(JSON).withHeaders(ETAG -> newEtag, "Links" -> ("<" + routes.RestAPI.profile("schedule").absoluteURL().toString + ">; rel=\"profile\""))
+          Ok(jsonObject).as(JSON).withHeaders(ETAG -> newEtag, "Links" -> ("<" + routes.RestAPI.profile("schedule").absoluteURL(USE_HTTPS) + ">; rel=\"profile\""))
         }
       }
   }
@@ -664,15 +668,15 @@ case class Conference(eventCode: String, label: String, locale: List[String], lo
 object Conference {
 
   implicit val confFormat = Json.format[Conference]
-
+  lazy val useHTTPS = Play.current.configuration.getBoolean("cfp.activateHTTPS").getOrElse(true)
   def currentConference(implicit req: RequestHeader) = Conference(
     ConferenceDescriptor.current().eventCode,
     Messages("longYearlyName") + ", " + Messages(ConferenceDescriptor.current().timing.datesI18nKey),
     ConferenceDescriptor.current().locale.map(_.toString),
     ConferenceDescriptor.current().localisation,
     Link(
-      routes.RestAPI.showConference(ConferenceDescriptor.current().eventCode).absoluteURL(),
-      routes.RestAPI.profile("conference").absoluteURL(),
+      routes.RestAPI.showConference(ConferenceDescriptor.current().eventCode).absoluteURL(useHTTPS),
+      routes.RestAPI.profile("conference").absoluteURL(useHTTPS),
       "See more details about " + Messages("longYearlyName")))
 
   def all(implicit req: RequestHeader) = {

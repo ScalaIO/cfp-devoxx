@@ -25,6 +25,9 @@ package controllers
 import java.math.BigInteger
 import java.security.SecureRandom
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 import models._
 import notifiers.Mails
 import org.apache.commons.codec.binary.Base64
@@ -39,9 +42,6 @@ import play.api.libs.Crypto
 import play.api.libs.json.Json
 import play.api.libs.ws._
 import play.api.mvc._
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 /**
   * Signup and Signin.
@@ -75,7 +75,7 @@ object Authentication extends Controller {
         validEmail => {
 
           if (Webuser.isEmailRegistered(validEmail)) {
-            val resetURL = routes.Authentication.resetPassword(Crypto.sign(validEmail.toLowerCase.trim), new String(Base64.encodeBase64(validEmail.toLowerCase.trim.getBytes("UTF-8")), "UTF-8")).absoluteURL()
+            val resetURL = routes.Authentication.resetPassword(Crypto.sign(validEmail.toLowerCase.trim), new String(Base64.encodeBase64(validEmail.toLowerCase.trim.getBytes("UTF-8")), "UTF-8")).absoluteURL(USE_HTTPS)
             Mails.sendResetPasswordLink(validEmail, resetURL)
             Redirect(routes.Application.index()).flashing("success" -> Messages("forget.password.confirm"))
           } else {
@@ -135,12 +135,15 @@ object Authentication extends Controller {
   private val USE_HTTPS = Play.current.configuration.getBoolean("cfp.activateHTTPS").getOrElse(true)
   private val GITHUB_CLIENT_ID = Play.current.configuration.getString("github.client_id")
   private val GITHUB_CLIENT_SECRET = Play.current.configuration.getString("github.client_secret")
+  private val GithubAccessTokenExtractor =""".*access_token=([^&]*)(?:&.*)?""".r
+  private val GITHUB_ACCESS_TOKEN_URL = "https://github.com/login/oauth/access_token"
+  private val SIGNED_OK = Crypto.sign("ok")
 
   def githubLogin(visitor: Boolean) = Action { implicit request =>
       GITHUB_CLIENT_ID.map {
         clientId: String =>
-          val redirectUri = routes.Authentication.callbackGithub(visitor).absoluteURL()
-          val gitUrl = "https://github.com/login/oauth/authorize?scope=user:email&client_id=" + clientId + "&state=" + Crypto.sign("ok") + "&redirect_uri=" + redirectUri
+          val redirectUri = routes.Authentication.callbackGithub(visitor).absoluteURL(USE_HTTPS)
+          val gitUrl = "https://github.com/login/oauth/authorize?scope=user:email&client_id=" + clientId + "&state=" + SIGNED_OK + "&redirect_uri=" + redirectUri
           Redirect(gitUrl)
       }.getOrElse {
         InternalServerError("github.client_id is not set in application.conf")
@@ -150,40 +153,36 @@ object Authentication extends Controller {
   //POST https://github.com/login/oauth/access_token
   val oauthForm = Form(tuple("code" -> text, "state" -> text))
   val accessTokenForm = Form("access_token" -> text)
+  def redeemParam(code:String): Option[Map[String,Seq[String]]]={
+      for (clientId <- GITHUB_CLIENT_ID;
+           clientSecret <- GITHUB_CLIENT_SECRET)
+        yield {
+          Map("client_id" -> Seq(clientId), "client_secret" -> Seq(clientSecret), "code" -> Seq(code))
+        }
+  }
 
   def callbackGithub(visitor: Boolean) = Action.async { implicit request =>
-      oauthForm.bindFromRequest.fold(
-        invalidForm => Future.successful(BadRequest(views.html.Application.home(invalidForm)).flashing("error" -> "Invalid form")),
-        xx=>xx match {
-        case (code, state) if state == Crypto.sign("ok") =>
-          val auth: Option[(String, String)] = for (clientId <- GITHUB_CLIENT_ID;
-                                                    clientSecret <- GITHUB_CLIENT_SECRET) yield (clientId, clientSecret)
-          auth.fold(Future.successful(InternalServerError("github.client_secret is not configured in application.conf"))) {
-            case (clientId, clientSecret) => {
-              val url = "https://github.com/login/oauth/access_token"
-              val wsCall = WS.url(url).post(Map("client_id" -> Seq(clientId), "client_secret" -> Seq(clientSecret), "code" -> Seq(code)))
-              wsCall.map { result =>
-                  result.status match {
-                    case 200 =>
-                      val b = result.body
-                      try {
-                        val accessToken = b.substring(b.indexOf("=") + 1, b.indexOf("&"))
-                        Redirect(routes.Authentication.createFromGithub(visitor)).withSession("access_token" -> accessToken)
-                      } catch {
-                        case e: IndexOutOfBoundsException =>
-                          Redirect(routes.Application.index()).flashing("error" -> "access token not found in query string")
-
-                      }
-                    case _ =>
-                      Redirect(routes.Application.index()).flashing("error" -> ("Could not complete Github OAuth, got HTTP response" + result.status + " " + result.body))
-
-                  }
+    oauthForm.bindFromRequest.fold(
+      invalidForm => Future.successful(BadRequest(views.html.Application.home(invalidForm)).flashing("error" -> "Invalid form")), {
+        case (code, SIGNED_OK) =>
+          redeemParam(code).fold(Future.successful(InternalServerError("github.client_secret is not configured in application.conf"))) { params =>
+            WS.url(GITHUB_ACCESS_TOKEN_URL).post(params).map { result =>
+              if (result.status == 200) {
+                result.body match {
+                  case GithubAccessTokenExtractor(accessToken) =>
+                    Redirect(routes.Authentication.createFromGithub(visitor)).withSession("access_token" -> accessToken)
+                  case _ =>
+                    Redirect(routes.Application.index()).flashing("error" -> "access token not found in github's response")
+                }
+              } else {
+                Redirect(routes.Application.index()).flashing("error" -> ("Could not complete Github OAuth, got HTTP response" + result.status + " " + result.body))
               }
             }
           }
 
         case other => Future.successful(BadRequest(views.html.Application.home(loginForm)).flashing("error" -> "Invalid state code"))
-      })
+      }
+    )
   }
 
   def showAccessToken = Action {
@@ -318,7 +317,7 @@ object Authentication extends Controller {
         invalidForm => BadRequest(views.html.Authentication.prepareSignup(invalidForm)),
         validForm => {
           Webuser.saveNewWebuserEmailNotValidated(validForm)
-          Mails.sendValidateYourEmail(validForm.email, routes.Authentication.validateYourEmailForSpeaker(Crypto.sign(validForm.email.toLowerCase.trim), new String(Base64.encodeBase64(validForm.email.toLowerCase.trim.getBytes("UTF-8")), "UTF-8")).absoluteURL())
+          Mails.sendValidateYourEmail(validForm.email, routes.Authentication.validateYourEmailForSpeaker(Crypto.sign(validForm.email.toLowerCase.trim), new String(Base64.encodeBase64(validForm.email.toLowerCase.trim.getBytes("UTF-8")), "UTF-8")).absoluteURL(USE_HTTPS))
           Ok(views.html.Authentication.created(validForm.email))
         }
       )
@@ -330,7 +329,7 @@ object Authentication extends Controller {
         invalidForm => BadRequest(views.html.Authentication.prepareSignupVisitor(invalidForm)),
         validForm => {
           Webuser.saveNewWebuserEmailNotValidated(validForm)
-          Mails.sendValidateYourEmail(validForm.email, routes.Authentication.validateYourEmailForVisitor(Crypto.sign(validForm.email.toLowerCase.trim), new String(Base64.encodeBase64(validForm.email.toLowerCase.trim.getBytes("UTF-8")), "UTF-8")).absoluteURL())
+          Mails.sendValidateYourEmail(validForm.email, routes.Authentication.validateYourEmailForVisitor(Crypto.sign(validForm.email.toLowerCase.trim), new String(Base64.encodeBase64(validForm.email.toLowerCase.trim.getBytes("UTF-8")), "UTF-8")).absoluteURL(USE_HTTPS))
           Ok(views.html.Authentication.created(validForm.email))
         }
       )
@@ -436,7 +435,7 @@ object Authentication extends Controller {
     implicit request =>
       Play.current.configuration.getString("linkedin.client_id").map {
         clientId: String =>
-          val redirectUri = routes.Authentication.callbackLinkedin().absoluteURL()
+          val redirectUri = routes.Authentication.callbackLinkedin().absoluteURL(USE_HTTPS)
           val state = new BigInteger(130, new SecureRandom()).toString(32)
           val gitUrl = "https://www.linkedin.com/uas/oauth2/authorization?client_id=" + clientId + "&scope=r_basicprofile%20r_emailaddress&state=" + Crypto.sign(state) + "&redirect_uri=" + redirectUri + "&response_type=code"
           Redirect(gitUrl).withSession("state" -> state)
@@ -458,7 +457,7 @@ object Authentication extends Controller {
           auth.map {
             case (clientId, clientSecret) => {
               val url = "https://www.linkedin.com/uas/oauth2/accessToken"
-              val redirect_uri = routes.Authentication.callbackLinkedin().absoluteURL()
+              val redirect_uri = routes.Authentication.callbackLinkedin().absoluteURL(USE_HTTPS)
               val wsCall = WS.url(url).withHeaders(("Accept" -> "application/json"), ("Content-Type" -> "application/x-www-form-urlencoded"))
                 .post(Map("client_id" -> Seq(clientId), "client_secret" -> Seq(clientSecret), "code" -> Seq(code), "grant_type" -> Seq("authorization_code"), "redirect_uri" -> Seq(redirect_uri)))
               wsCall.map {
@@ -539,7 +538,7 @@ object Authentication extends Controller {
     implicit request =>
       Play.current.configuration.getString("google.client_id").map {
         clientId: String =>
-          val redirectUri = routes.Authentication.callbackGoogle().absoluteURL()
+          val redirectUri = routes.Authentication.callbackGoogle().absoluteURL(USE_HTTPS)
           val state = new BigInteger(130, new SecureRandom()).toString(32)
           val gitUrl = "https://accounts.google.com/o/oauth2/auth?client_id=" + clientId + "&scope=openid%20email%20profile&state=" + Crypto.sign(state) + "&redirect_uri=" + redirectUri + "&response_type=code"
           Redirect(gitUrl).withSession("state" -> state)
@@ -563,7 +562,7 @@ object Authentication extends Controller {
           auth.map {
             case (clientId, clientSecret) => {
               val url = "https://accounts.google.com/o/oauth2/token"
-              val redirect_uri = routes.Authentication.callbackGoogle().absoluteURL()
+              val redirect_uri = routes.Authentication.callbackGoogle().absoluteURL(USE_HTTPS)
               val wsCall = WS.url(url).withHeaders(("Accept" -> "application/json"), ("User-Agent" -> ("CFP " + ConferenceDescriptor.current().conferenceUrls.cfpHostname))).post(Map("client_id" -> Seq(clientId), "client_secret" -> Seq(clientSecret), "code" -> Seq(code), "grant_type" -> Seq("authorization_code"), "redirect_uri" -> Seq(redirect_uri)))
               wsCall.map {
                 result =>
