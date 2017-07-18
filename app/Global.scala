@@ -2,22 +2,21 @@ import java.util.concurrent.TimeUnit
 
 import library.search.{StopIndex, _}
 import library.{DraftReminder, _}
-import models.{Speaker, ConferenceDescriptor, ProposalState, Proposal}
+import models.{ConferenceDescriptor, Proposal, ProposalState, Speaker}
 import org.apache.commons.lang3.StringUtils
 import org.joda.time.DateMidnight
 import play.api.Play.current
 import play.api.libs.concurrent._
-import play.api.mvc.RequestHeader
+import play.api.mvc.{RequestHeader, WithFilters}
 import play.api.mvc.Results._
 import play.api.templates.HtmlFormat
 import play.api.{UnexpectedException, _}
 import play.core.Router.Routes
-
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.control.NonFatal
 
-object Global extends GlobalSettings {
+object Global extends WithFilters(new TLSFilter) {
   override def onStart(app: Application) {
     Play.current.configuration.getBoolean("actor.cronUpdater.active") match {
       case Some(true) if Play.isProd =>
