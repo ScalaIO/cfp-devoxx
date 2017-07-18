@@ -132,9 +132,12 @@ object Authentication extends Controller {
       Redirect(routes.Application.index).discardingCookies(discardingCookie).withNewSession
   }
 
-  def githubLogin(visitor: Boolean) = Action {
-    implicit request =>
-      Play.current.configuration.getString("github.client_id").map {
+  private val USE_HTTPS = Play.current.configuration.getBoolean("cfp.activateHTTPS").getOrElse(true)
+  private val GITHUB_CLIENT_ID = Play.current.configuration.getString("github.client_id")
+  private val GITHUB_CLIENT_SECRET = Play.current.configuration.getString("github.client_secret")
+
+  def githubLogin(visitor: Boolean) = Action { implicit request =>
+      GITHUB_CLIENT_ID.map {
         clientId: String =>
           val redirectUri = routes.Authentication.callbackGithub(visitor).absoluteURL()
           val gitUrl = "https://github.com/login/oauth/authorize?scope=user:email&client_id=" + clientId + "&state=" + Crypto.sign("ok") + "&redirect_uri=" + redirectUri
@@ -148,42 +151,37 @@ object Authentication extends Controller {
   val oauthForm = Form(tuple("code" -> text, "state" -> text))
   val accessTokenForm = Form("access_token" -> text)
 
-  def callbackGithub(visitor: Boolean) = Action.async {
-    implicit request =>
-      oauthForm.bindFromRequest.fold(invalidForm => {
-        Future.successful(BadRequest(views.html.Application.home(invalidForm)).flashing("error" -> "Invalid form"))
-      }, {
-        case (code, state) if state == Crypto.sign("ok") => {
-          val auth = for (clientId <- Play.current.configuration.getString("github.client_id");
-                          clientSecret <- Play.current.configuration.getString("github.client_secret")) yield (clientId, clientSecret)
-          auth.map {
+  def callbackGithub(visitor: Boolean) = Action.async { implicit request =>
+      oauthForm.bindFromRequest.fold(
+        invalidForm => Future.successful(BadRequest(views.html.Application.home(invalidForm)).flashing("error" -> "Invalid form")),
+        xx=>xx match {
+        case (code, state) if state == Crypto.sign("ok") =>
+          val auth: Option[(String, String)] = for (clientId <- GITHUB_CLIENT_ID;
+                                                    clientSecret <- GITHUB_CLIENT_SECRET) yield (clientId, clientSecret)
+          auth.fold(Future.successful(InternalServerError("github.client_secret is not configured in application.conf"))) {
             case (clientId, clientSecret) => {
               val url = "https://github.com/login/oauth/access_token"
               val wsCall = WS.url(url).post(Map("client_id" -> Seq(clientId), "client_secret" -> Seq(clientSecret), "code" -> Seq(code)))
-              wsCall.map {
-                result =>
+              wsCall.map { result =>
                   result.status match {
-                    case 200 => {
+                    case 200 =>
                       val b = result.body
                       try {
                         val accessToken = b.substring(b.indexOf("=") + 1, b.indexOf("&"))
                         Redirect(routes.Authentication.createFromGithub(visitor)).withSession("access_token" -> accessToken)
                       } catch {
-                        case e: IndexOutOfBoundsException => {
+                        case e: IndexOutOfBoundsException =>
                           Redirect(routes.Application.index()).flashing("error" -> "access token not found in query string")
-                        }
+
                       }
-                    }
-                    case _ => {
+                    case _ =>
                       Redirect(routes.Application.index()).flashing("error" -> ("Could not complete Github OAuth, got HTTP response" + result.status + " " + result.body))
-                    }
+
                   }
               }
             }
-          }.getOrElse {
-            Future.successful(InternalServerError("github.client_secret is not configured in application.conf"))
           }
-        }
+
         case other => Future.successful(BadRequest(views.html.Application.home(loginForm)).flashing("error" -> "Invalid state code"))
       })
   }
