@@ -186,9 +186,9 @@ typelevel_functional.label=Type & Functional Programming
 typelevel_functional.leaderboard=Type & Functional Programming
 track.typelevel_functional.title=Type & Functional Programming
 track.typelevel_functional.desc=Talks focusing on advanced scala features, meta programming with macros, complex type manipulation and computation, new type techniques, advanced functional programming and supporting libraries.
-university.label=Scala University
-university.leaderboard=Scala University
-track.university.title=Scala University
+university.label=Learning Scala
+university.leaderboard=Learning Scala
+track.university.title=Learning Scala
 track.university.desc=This is new this year. We have met many developers who have looked / are looking at scala but are unsure how to get started with it at work, how to introduce it to their team. This category is to create a "getting started" track for these people : from the scala basics to starting your project, how to integrate scala and the scala tests frameworks in a java project, how to organise a scala code base, which frameworks/libs can help bootstrap your use of scala, how to get started with functional programming, common patterns in scala, etc. Help us turn enthousiasts into evangelists ! :) Since this is specifcally for beginners, french talks will be preferred over english ones.
 
 java.label=Java, JVM, Javas SE/EE

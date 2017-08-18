@@ -176,9 +176,9 @@ typelevel_functional.label=Type & Functional Programming
 typelevel_functional.leaderboard=Type & Functional Programming
 track.typelevel_functional.title=Type & Functional Programming
 track.typelevel_functional.desc=Dans cette track pour une audience d'un niveau intermédiaire ou avancé, nous espérons retrouver des sujets abordant des fonctionnalités avancées de scala, de la programmation fonctionnelle, de la méta programmation ou du calcul dans le systeme.Mais aussi de nouvelles techniques ou idées plus proches de la recherche que de la production
-university.label=Scala University
-university.leaderboard=Scala University
-track.university.title=Scala University
+university.label=Apprendre Scala
+university.leaderboard=Apprendre Scala
+track.university.title=Apprendre Scala
 track.university.desc=Cette nouvelle track a été créé pour aider les développeurs débutants qui voudraient franchir le pas et utiliser scala dans leur travai de tous les jours. Que ce soit par la petite porte en intégrant scala dans leur suites de tests, ou pour démarrer un nouveau projet, les sujets de cette track sont là pour aider les participants a gagner en confiance et a se lancer avec Scala. Les sujets devront refléter cet objectif : des bases du langage a démarrer votre projet, comment ajouter scala et ses outils de test dans un projet java java project, comment organiser une base de code scala, quels frameworks/libs peuvent vous aider a bootstraper votre usage de scala, programmation fonctionnelles, patterns récurrents en scala, etc. Aidez nous à transformer les enthousiastes en évangélistes !
 
 java.label=Java, JVM, Javas SE/EE
