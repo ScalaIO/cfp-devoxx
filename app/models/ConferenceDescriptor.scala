@@ -552,7 +552,7 @@ object ConferenceDescriptor {
       datesFr = "du 2 au 3 Novembre 2017",
       datesEn = "from 2nd to 3rd November, 2017",
       cfpOpenedOn = DateTime.parse("2017-05-16T00:00:00+02:00"),
-      cfpClosedOn = DateTime.parse("2017-09-09T00:00:00+02:00"),
+      cfpClosedOn = DateTime.parse("2017-09-11T12:00:00+02:00"),
       scheduleAnnouncedOn = DateTime.parse("2017-09-15T00:00:00+02:00"),
       days = dateRange(fromDay, toDay, new Period().withDays(1))
     ),
