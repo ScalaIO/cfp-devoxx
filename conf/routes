@@ -125,6 +125,7 @@ GET           /admin/deleteAllVotes                                             
 GET           /admin/submittedByDate                                            controllers.Backoffice.submittedByDate()
 
 GET           /admin/export/allSpeakers                                         controllers.Backoffice.speakersCsvExport()
+GET           /admin/export/allVotes                                            controllers.Backoffice.allVotesCsvExport()
 
 # Authenticate and admin as a regular user
 GET           /admin/authenticateAs/:uuid                                       controllers.Backoffice.authenticateAs(uuid:String)

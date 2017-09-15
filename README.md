@@ -68,7 +68,9 @@ A docker compose file is provided with Redis and Elastic Search configuration.
 
 To connect to your local Redis Cli, you can use this command line as an example :
 
-```docker run -it --link cfpdevoxx_redis_1:redis --rm redis sh -c 'exec redis-cli -h "$REDIS_PORT_6379_TCP_ADDR" -p "$REDIS_PORT_6379_TCP_PORT"'``
+```
+docker run -it --link cfpdevoxx_redis_1:redis --rm redis sh -c 'exec redis-cli -h "$REDIS_PORT_6379_TCP_ADDR" -p "$REDIS_PORT_6379_TCP_PORT"'
+```
 
 ## Here's what you need to configure:
 
@@ -86,7 +88,7 @@ To connect to your local Redis Cli, you can use this command line as an example 
 ## Where do I start?
 
 First things first, you need to set-up your own conference. To do so, Frederic Camblor implemented a generic
-class that contains most (but not all) importants details. Check ConferenceDescriptor.scala. This file defines
+class that contains most (but not all) importants details. Check _ConferenceDescriptor.scala_. This file defines
 the configuration of your own conference. The Schedule/Slots is not mandatory when you start to configure your application.
 However if you plan to use the REST API then you should also configure this part. Check for the TODO's in the file.
 

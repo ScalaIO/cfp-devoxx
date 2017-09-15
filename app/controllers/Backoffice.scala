@@ -2,12 +2,14 @@ package controllers
 
 import library.search.{DoIndexProposal, _}
 import library.{DraftReminder, Redis, ZapActor}
+import models.Review._
 import models._
 import org.joda.time.Instant
 import play.api.Play
 import play.api.cache.EhCachePlugin
 import play.api.data.Forms._
 import play.api.data._
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.mvc.Action
 
@@ -284,10 +286,54 @@ object Backoffice extends SecureCFPController {
       Ok(views.html.Backoffice.showAllDeclined(allDeclined))
 
   }
+
   def speakersCsvExport()= SecuredAction(IsMemberOf("admin")) { implicit request =>
     val lines = Speaker.allSpeakers().map(s => Seq(s.firstName.getOrElse(""), s.name.getOrElse(""), s.email).mkString(","))
     val header = "firstname, lastname, email"
     val csv = (header +: lines).mkString("\n")
     Ok(csv).withHeaders("Content-type"->"text/csv", "Content-Disposition"->"attachment; filename=allspeakers.csv")
   }
+
+  def allVotesCsvExport() = SecuredAction(IsMemberOf("admin")) {
+    implicit request: SecuredRequest[play.api.mvc.AnyContent] =>
+
+      val reviews: Map[String, (Score, TotalVoter, TotalAbst, AverageNote, StandardDev)] = Review.allVotes()
+
+      val allProposals = Proposal.loadAndParseProposals(reviews.keySet)
+
+      val listOfProposals = reviews.flatMap {
+        case (proposalId, scoreAndVotes) =>
+          val maybeProposal = allProposals.get(proposalId)
+          maybeProposal match {
+            case None => play.Logger.of("CFPAdmin").error(s"Unable to load proposal id $proposalId")
+              None
+            case Some(p) => {
+              val goldenTicketScore: Double = ReviewByGoldenTicket.averageScore(p.id)
+              val gtVoteCast: Long = ReviewByGoldenTicket.totalVoteCastFor(p.id)
+              Option(p, scoreAndVotes, goldenTicketScore, gtVoteCast)
+            }
+          }
+      }
+
+      val lines: List[String] = listOfProposals.toList
+        .map { case (proposal, voteAndTotalVotes, _, _) =>
+          List(
+            proposal.id,
+            ApprovedProposal.isApproved(proposal.id, proposal.talkType.id),
+            proposal.sponsorTalk,
+            proposal.talkType.id,
+            proposal.allSpeakers.map { s => s.firstName.getOrElse("") + " " + s.name.getOrElse("") }.mkString("/"),
+            Messages(proposal.track.label),
+            proposal.lang,
+            voteAndTotalVotes._1.s,
+            voteAndTotalVotes._2.i,
+            voteAndTotalVotes._3.i
+          ).mkString(",")
+        }
+      val header = List("id", "isapproved", "issponsortalk", "talktype", "speakers", "label", "lang", "score",
+        "totalvote", "totalabsent").mkString(",")
+      val csv = (header +: lines).mkString("\n")
+      Ok(csv).withHeaders("Content-type" -> "text/csv", "Content-Disposition" -> "attachment; filename=allvotes.csv")
+  }
+
 }
