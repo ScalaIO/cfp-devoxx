@@ -4,28 +4,29 @@
 Bonjour,
 
 Nous avons le regret de vous informer que votre proposition @proposal.title au format @proposal.talkType.label n'a pas été acceptée.
-Nous vous remercions cependant pour le temps que vous avez consacré à préparer votre sujet.
+Une fois de plus, la sélection a encore été difficile.
+Néanmoins, nous vous remercions cependant pour le temps que vous avez consacré à préparer votre sujet.
 
-Si vous souhaitez vous inscrire, nous avons prolongé l'offre "early-bird" afin de vous faire
-bénéficier du prix discount. La sélection cette année a encore été difficile. Nous communiquerons sur
-notre site plus d'informations sur la sélection.
+Si vous souhaitez vous inscrire à @Messages("longYearlyName"), nous avons prolongé pour vous l'offre "early-bird", afin de vous faire bénéficier du prix discount. Pour cela utiliser le code 20171102_25_SCALAIO_PASS.
+Nous communiquerons sur notre site plus d'informations sur la sélection.
 
-Merci pour votre proposition,
+Encore une fois merci pour votre proposition.
 
+Cordialement,
 L'équipe de sélection de la conférence @Messages("longYearlyName")
 
 ----------------------------------------------------------------------------------------------------------------
 }
 Hi,
-We're sorry to inform you that your proposal for @Messages("longYearlyName") was refused,  keep in mind that
-we received close to 800 proposals and the available slots are very limited.
 
-Proposition title : @proposal.title, @Messages(proposal.talkType.id).
+We're sorry to inform you that your @proposal.talkType.label titled @proposal.title has been refused.
+One again, the selection was the result of difficult decisions.
+This said, we would like to thank you sincerely for your proposal.
 
-We would like to thank you sincerely for your proposal.
-Hopefully we can still welcome you as an attendee, registration details
+If you want to register for @Messages("longYearlyName"), we have extended for you the "early-bird" offer, so you can benefit of discount. Use the code 20171102_25_SCALAIO_PASS.
+We will communicate on our website more information about the selection.
 
-@ConferenceDescriptor.current().conferenceUrls.registration
+Once again, thanks for your proposal.
 
 Kind regards,
 The @Messages("longYearlyName") team
