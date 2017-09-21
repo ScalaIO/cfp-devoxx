@@ -7,7 +7,7 @@ Nous avons le regret de vous informer que votre proposition @proposal.title au f
 Une fois de plus, la sélection a encore été difficile.
 Néanmoins, nous vous remercions cependant pour le temps que vous avez consacré à préparer votre sujet.
 
-Si vous souhaitez vous inscrire à @Messages("longYearlyName"), nous avons prolongé pour vous l'offre "early-bird", afin de vous faire bénéficier du prix discount.
+Si vous souhaitez vous inscrire à @Messages("longYearlyName"), nous avons prolongé pour vous l'offre "early-bird", afin de vous faire bénéficier du prix discount. Pour cela utiliser le code 20171102_25_SCALAIO_PASS.
 Nous communiquerons sur notre site plus d'informations sur la sélection.
 
 Encore une fois merci pour votre proposition.
@@ -23,7 +23,7 @@ We're sorry to inform you that your @proposal.talkType.label titled @proposal.ti
 One again, the selection was the result of difficult decisions.
 This said, we would like to thank you sincerely for your proposal.
 
-If you want to register for @Messages("longYearlyName"), we have extended for you the "early-bird" offer, so you can benefit of discount.
+If you want to register for @Messages("longYearlyName"), we have extended for you the "early-bird" offer, so you can benefit of discount. Use the code 20171102_25_SCALAIO_PASS.
 We will communicate on our website more information about the selection.
 
 Once again, thanks for your proposal.
