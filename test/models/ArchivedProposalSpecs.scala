@@ -52,11 +52,7 @@ class ArchivedProposalSpecs extends PlaySpecification {
 
       // GIVEN
       val uuidTest = "test_user"
-      val proposal = Proposal.validateNewProposal(None, "fr", "test proposal deleted", None, Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
-        "audience level", "summary", "private message", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.UNKNOWN.id, Option("beginner"),
-        userGroup = None)
+      val proposal = testProposal(uuidTest, "test proposal deleted")
 
       val newProposalId = Proposal.save(uuidTest, proposal, ProposalState.DELETED)
 
@@ -85,11 +81,7 @@ class ArchivedProposalSpecs extends PlaySpecification {
 
       // GIVEN
       val uuidTest = "test_user"
-      val proposal = Proposal.validateNewProposal(None, "fr", "test proposal deleted", None, Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
-        "audience level", "summary", "private message", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.UNKNOWN.id, Option("beginner"),
-        userGroup = None)
+      val proposal = testProposal(uuidTest, "test proposal deleted")
 
       val newProposalId = Proposal.save(uuidTest, proposal, ProposalState.DRAFT)
 
@@ -120,12 +112,7 @@ class ArchivedProposalSpecs extends PlaySpecification {
 
       // GIVEN a submitted proposal
       val uuidTest = "test_user"
-      val proposal = Proposal.validateNewProposal(None, "fr", "test proposal submitted", None, Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
-        "audience level", "summary", "private message", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.UNKNOWN.id,
-        Option("beginner"),
-        userGroup = None)
+      val proposal = testProposal(uuidTest, "test proposal submitted")
 
       val proposalId = Proposal.save(uuidTest, proposal, ProposalState.DRAFT)
       Proposal.submit(uuidTest, proposalId)
@@ -148,12 +135,7 @@ class ArchivedProposalSpecs extends PlaySpecification {
 
       // GIVEN a submitted proposal
       val uuidTest = "test_user"
-      val proposal = Proposal.validateNewProposal(None, "fr", "test proposal accepted", None, Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
-        "audience level", "summary", "private message", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.UNKNOWN.id,
-        Option("beginner"),
-        userGroup = None)
+      val proposal = testProposal(uuidTest, "test proposal accepted")
 
       val newProposalId = Proposal.save(uuidTest, proposal, ProposalState.DRAFT)
       Proposal.submit(uuidTest, newProposalId)
@@ -211,7 +193,7 @@ class ArchivedProposalSpecs extends PlaySpecification {
       Review.allProposalsNotReviewed(reviewerUUID) mustEqual Nil
       Review.allProposalsWithNoVotes mustEqual Map.empty[String, Proposal]
       Review.allReviewersAndStats() mustEqual Nil
-      Review.allVotes() mustEqual Set.empty
+      Review.allVotes() mustEqual Map.empty
       Review.allVotesFor(proposalId) mustEqual Nil
       Review.allVotesFromUser(reviewerUUID) mustEqual Set.empty
       Review.bestReviewer() mustEqual None
@@ -303,7 +285,7 @@ class ArchivedProposalSpecs extends PlaySpecification {
       Leaderboard.mostReviewed() mustEqual None
       Leaderboard.bestReviewer() mustEqual None
       Leaderboard.worstReviewer() mustEqual None
-      Leaderboard.lazyOnes() mustEqual Set.empty
+      Leaderboard.lazyOnes() mustEqual Map.empty
 
       Leaderboard.totalSubmittedByTrack() mustEqual Map.empty
       Leaderboard.totalSubmittedByType() mustEqual Map.empty
@@ -328,23 +310,28 @@ class ArchivedProposalSpecs extends PlaySpecification {
     }
   }
 
+  private def testProposal(proposalId: String, title: String) = Proposal(
+    proposalId,
+    "test event",
+    "fr",
+    title,
+    "no_main_speaker",
+    None,
+    Nil,
+    ConferenceDescriptor.ConferenceProposalTypes.CONF,
+    "audience level",
+    "summary",
+    "private message",
+    state = ProposalState.UNKNOWN,
+    track = Track.UNKNOWN,
+    demoLevel = Some("beginner"),
+    userGroup = None
+  )
+
   private def createATestProposalAndSubmitIt(speakerUUID: String): String = {
     // 3-
     val proposalId = RandomStringUtils.randomAlphabetic(8)
-    val someProposal = Proposal.validateNewProposal(
-      Some(proposalId),
-      "fr",
-      "some test Proposal",
-      None,
-      Nil,
-      ConferenceDescriptor.ConferenceProposalTypes.ALL.head.id,
-      "audience level",
-      "summary",
-      "private message",
-      sponsorTalk = false,
-      ConferenceDescriptor.ConferenceTracks.ALL.head.id,
-      Option("beginner"),
-      userGroup = None)
+    val someProposal = testProposal(proposalId, "some test Proposal")
 
     Proposal.save(speakerUUID, someProposal, ProposalState.DRAFT)
     // Submit the proposal
@@ -357,7 +344,7 @@ class ArchivedProposalSpecs extends PlaySpecification {
     val webuser = Webuser.createSpeaker(email, "John", "UnitTest")
     Webuser.saveAndValidateWebuser(webuser)
     val uuid =  webuser.uuid
-    val speaker =  Speaker.createSpeaker(email, "j", "b" , None,None,None,None,None,"john","q" )
+    val speaker =  Speaker.createSpeaker(uuid, email, "j","b" , None, None, None, None, None, "john", "q")
     Speaker.save(speaker)
     uuid
   }
