@@ -23,8 +23,10 @@
 
 package models
 
+import java.util.UUID
+
 import library.Redis
-import play.api.test.{WithApplication, FakeApplication, PlaySpecification}
+import play.api.test.{FakeApplication, PlaySpecification, WithApplication}
 
 /**
  * Tests for approve/refuse service.
@@ -33,7 +35,7 @@ import play.api.test.{WithApplication, FakeApplication, PlaySpecification}
  */
 class ApprovedProposalSpecs extends PlaySpecification {
   // Use a different Redis Database than the PROD one
-  val testRedis = Map("redis.host" -> "localhost", "redis.port" -> "6364", "redis.activeDatabase" -> 1)
+  val testRedis = Map("redis.host" -> "localhost", "redis.port" -> "6363", "redis.activeDatabase" -> 1)
 
   // To avoid Play Cache Exception during tests, check this
   // https://groups.google.com/forum/#!topic/play-framework/PBIfeiwl5rU
@@ -49,11 +51,23 @@ class ApprovedProposalSpecs extends PlaySpecification {
       }
 
       // GIVEN
-      val proposal = Proposal.validateNewProposal(None, "fr", "test proposal", None, Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
-        "audience level", "summary", "private message", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
-        userGroup = Some(true))
+      val proposal = Proposal(
+        UUID.randomUUID().toString,
+        "test event",
+        "fr",
+        "test proposal",
+        "no_main_speaker",
+        None,
+        Nil,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF,
+        "audience level",
+        "summary",
+        "private message",
+        state = ProposalState.UNKNOWN,
+        track = Track.parse("java"),
+        demoLevel = Some("beginner"),
+        userGroup = Some(true)
+      )
 
       Proposal.save("test", proposal, ProposalState.SUBMITTED)
 
@@ -78,7 +92,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal", None, Nil,
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary", "private message", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("test", proposal, ProposalState.SUBMITTED)
@@ -106,7 +120,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2", None, Nil,
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("test", proposal, ProposalState.SUBMITTED)
@@ -134,7 +148,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2", None, Nil,
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("test", proposal, ProposalState.SUBMITTED)
@@ -161,7 +175,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2", None, Nil,
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("test", proposal, ProposalState.SUBMITTED)
@@ -190,7 +204,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
         Nil,
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
@@ -218,7 +232,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
         Nil,
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
@@ -246,7 +260,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
         List("someOtherSpeaker"),
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
@@ -273,7 +287,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
         Nil,
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
@@ -303,7 +317,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
         Nil,
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
@@ -333,7 +347,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
         List("firstThirdSpeaker"),
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
