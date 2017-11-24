@@ -27,6 +27,8 @@ import library.Redis
 import org.apache.commons.lang3.RandomStringUtils
 import play.api.test.{FakeApplication, PlaySpecification, WithApplication}
 
+import scala.collection.JavaConverters._
+
 /*
  * Play uses Specs2 for testing.
  *
@@ -39,7 +41,19 @@ class ProposalSpecs extends PlaySpecification {
     , "redis.port" -> "6363"
     , "redis.activeDatabase" -> 1
   )
-  val appWithTestRedis = FakeApplication(additionalConfiguration = testRedis)
+  val testTracks = Map(
+    "cfp.tracks" -> Seq(
+      Map(
+        "id" -> "java"
+        , "icon" -> ""
+      ).asJava
+      , Map(
+        "id" -> "future"
+        , "icon" -> ""
+      ).asJava
+    ).asJava
+  )
+  val appWithTestRedis = FakeApplication(additionalConfiguration = testRedis ++ testTracks)
 
   val sampleProposalType = ConferenceDescriptor.ConferenceProposalTypes
 
@@ -350,7 +364,7 @@ class ProposalSpecs extends PlaySpecification {
       "summary",
       "private message",
       sponsorTalk = false,
-      ConferenceDescriptor.ConferenceTracks.UNKNOWN.id,
+      Track.UNKNOWN.id,
       Option("beginner"),
       userGroup = None)
 
@@ -380,7 +394,7 @@ class ProposalSpecs extends PlaySpecification {
     }
 
     val proposalId = "TST-001333"
-     val keepProposal = Proposal.validateNewProposal(Some(proposalId),
+    val keepProposal = Proposal.validateNewProposal(Some(proposalId),
       "fr",
       "test proposal deleted",
       None,
@@ -390,7 +404,7 @@ class ProposalSpecs extends PlaySpecification {
       "summary",
       "private message",
       sponsorTalk = false,
-      ConferenceDescriptor.ConferenceTracks.UNKNOWN.id,
+      Track.UNKNOWN.id,
       Option("beginner"),
       userGroup = None)
 
@@ -412,19 +426,23 @@ class ProposalSpecs extends PlaySpecification {
     }
 
     val proposalId = "TST-001333"
-     val keepProposal = Proposal.validateNewProposal(Some(proposalId),
+    val keepProposal = Proposal(
+      proposalId,
+      "test event",
       "fr",
       "test proposal deleted",
+      "no_main_speaker",
       None,
       Nil,
-      sampleProposalType.CONF.id,
+      sampleProposalType.CONF,
       "audience level",
       "summary",
       "private message",
-      sponsorTalk = false,
-      ConferenceDescriptor.ConferenceTracks.UNKNOWN.id,
-      Option("beginner"),
-      userGroup = None)
+      ProposalState.UNKNOWN,
+      track = Track.UNKNOWN,
+      demoLevel = Option("beginner"),
+      userGroup = None
+    )
 
     Proposal.save("user_1234", keepProposal, ProposalState.DRAFT)
 
@@ -444,7 +462,7 @@ class ProposalSpecs extends PlaySpecification {
     }
 
     val proposalId = "TST-001333"
-     val keepProposal = Proposal.validateNewProposal(Some(proposalId),
+    val keepProposal = Proposal.validateNewProposal(Some(proposalId),
       "fr",
       "test proposal deleted",
       None,
@@ -454,7 +472,7 @@ class ProposalSpecs extends PlaySpecification {
       "summary",
       "private message",
       sponsorTalk = false,
-      ConferenceDescriptor.ConferenceTracks.UNKNOWN.id,
+      Track.UNKNOWN.id,
       Option("beginner"),
       userGroup = None)
 
@@ -478,7 +496,7 @@ class ProposalSpecs extends PlaySpecification {
 
     // 1-
     val proposalIdToDelete = "DEL-001333"
-     val proposalToDelete = Proposal.validateNewProposal(Some(proposalIdToDelete),
+    val proposalToDelete = Proposal.validateNewProposal(Some(proposalIdToDelete),
       "fr",
       "test proposal deleted",
       None,
@@ -488,7 +506,7 @@ class ProposalSpecs extends PlaySpecification {
       "summary",
       "private message",
       sponsorTalk = false,
-      ConferenceDescriptor.ConferenceTracks.UNKNOWN.id,
+      Track.UNKNOWN.id,
       Option("beginner"),
       userGroup = None)
 
@@ -496,7 +514,7 @@ class ProposalSpecs extends PlaySpecification {
 
     // 2-
     val proposalIdToArchive = "ARC-001333"
-     val archivedProposal = Proposal.validateNewProposal(Some(proposalIdToArchive),
+    val archivedProposal = Proposal.validateNewProposal(Some(proposalIdToArchive),
       "fr",
       "test proposal archive",
       None,
@@ -506,7 +524,7 @@ class ProposalSpecs extends PlaySpecification {
       "summary",
       "private message",
       sponsorTalk = false,
-      ConferenceDescriptor.ConferenceTracks.UNKNOWN.id,
+      Track.UNKNOWN.id,
       Option("beginner"),
       userGroup = None)
 
@@ -514,7 +532,7 @@ class ProposalSpecs extends PlaySpecification {
 
     // 3-
     val proposalId = "OK-001333"
-     val someProposal = Proposal.validateNewProposal(Some(proposalId),
+    val someProposal = Proposal.validateNewProposal(Some(proposalId),
       "fr",
       "some Proposal",
       None,
@@ -524,7 +542,7 @@ class ProposalSpecs extends PlaySpecification {
       "summary",
       "private message",
       sponsorTalk = false,
-      ConferenceDescriptor.ConferenceTracks.UNKNOWN.id,
+      Track.UNKNOWN.id,
       Option("beginner"),
       userGroup = None)
 
