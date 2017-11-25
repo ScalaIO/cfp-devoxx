@@ -475,7 +475,6 @@ object CFPAdmin extends SecureCFPController {
               if(showQuickiesAndBof){
                 p==null
               }else{
-                p.talkType==ConferenceDescriptor.ConferenceProposalTypes.BOF ||
                 p.talkType==ConferenceDescriptor.ConferenceProposalTypes.QUICK
               }
           }
