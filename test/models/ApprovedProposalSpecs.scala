@@ -23,8 +23,10 @@
 
 package models
 
+import java.util.UUID
+
 import library.Redis
-import play.api.test.{WithApplication, FakeApplication, PlaySpecification}
+import play.api.test.{FakeApplication, PlaySpecification, WithApplication}
 
 /**
  * Tests for approve/refuse service.
@@ -33,14 +35,14 @@ import play.api.test.{WithApplication, FakeApplication, PlaySpecification}
  */
 class ApprovedProposalSpecs extends PlaySpecification {
   // Use a different Redis Database than the PROD one
-  val testRedis = Map("redis.host" -> "localhost", "redis.port" -> "6364", "redis.activeDatabase" -> 1)
+  val testRedis = Map("redis.host" -> "localhost", "redis.port" -> "6363", "redis.activeDatabase" -> 1)
 
   // To avoid Play Cache Exception during tests, check this
   // https://groups.google.com/forum/#!topic/play-framework/PBIfeiwl5rU
   val appWithTestRedis = () => FakeApplication(additionalConfiguration = testRedis)
 
   "ApprovedProposal" should {
-    "return correct total with countApproved for a BOF" in new WithApplication(app = appWithTestRedis()) {
+    "return correct total with countApproved for a CONF" in new WithApplication(app = appWithTestRedis()) {
 
       // WARN : flush the DB, but on Database = 1
       Redis.pool.withClient {
@@ -49,11 +51,23 @@ class ApprovedProposalSpecs extends PlaySpecification {
       }
 
       // GIVEN
-      val proposal = Proposal.validateNewProposal(None, "fr", "test proposal", None, Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.BOF.id,
-        "audience level", "summary", "private message", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
-        userGroup = Some(true))
+      val proposal = Proposal(
+        UUID.randomUUID().toString,
+        "test event",
+        "fr",
+        "test proposal",
+        "no_main_speaker",
+        None,
+        Nil,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF,
+        "audience level",
+        "summary",
+        "private message",
+        state = ProposalState.UNKNOWN,
+        track = Track.parse("java"),
+        demoLevel = Some("beginner"),
+        userGroup = Some(true)
+      )
 
       Proposal.save("test", proposal, ProposalState.SUBMITTED)
 
@@ -62,11 +76,11 @@ class ApprovedProposalSpecs extends PlaySpecification {
 
       // THEN
       ApprovedProposal.countApproved("all") mustEqual 1
-      ApprovedProposal.countApproved(ConferenceDescriptor.ConferenceProposalTypes.BOF.id) mustEqual 1
-      ApprovedProposal.countApproved(ConferenceDescriptor.ConferenceProposalTypes.CONF.id) mustEqual 0
+      ApprovedProposal.countApproved(ConferenceDescriptor.ConferenceProposalTypes.CONF.id) mustEqual 1
+      ApprovedProposal.countApproved(ConferenceDescriptor.ConferenceProposalTypes.LAB.id) mustEqual 0
     }
 
-    "return the updated total when proposal type is updated from BOF to CONF, fix bug 159" in new WithApplication(app = appWithTestRedis()) {
+    "return the updated total when proposal type is updated from CONF to LAB, fix bug 159" in new WithApplication(app = appWithTestRedis()) {
 
       // WARN : flush the DB, but on Database = 1
       Redis.pool.withClient {
@@ -76,25 +90,25 @@ class ApprovedProposalSpecs extends PlaySpecification {
 
       // GIVEN
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal", None, Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.BOF.id,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary", "private message", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("test", proposal, ProposalState.SUBMITTED)
 
       // WHEN
       ApprovedProposal.approve(proposal)
-      val proposal2 = proposal.copy(talkType = ConferenceDescriptor.ConferenceProposalTypes.CONF)
+      val proposal2 = proposal.copy(talkType = ConferenceDescriptor.ConferenceProposalTypes.LAB)
       Proposal.save("test", proposal2, ProposalState.SUBMITTED)
 
       // THEN
       ApprovedProposal.countApproved("all") mustEqual 1
-      ApprovedProposal.countApproved(ConferenceDescriptor.ConferenceProposalTypes.BOF.id) mustEqual 0
-      ApprovedProposal.countApproved(ConferenceDescriptor.ConferenceProposalTypes.CONF.id) mustEqual 1
+      ApprovedProposal.countApproved(ConferenceDescriptor.ConferenceProposalTypes.CONF.id) mustEqual 0
+      ApprovedProposal.countApproved(ConferenceDescriptor.ConferenceProposalTypes.LAB.id) mustEqual 1
     }
 
-    "return the updated total when a refused proposal type is updated from BOF to CONF" in new WithApplication(app = appWithTestRedis()) {
+    "return the updated total when a refused proposal type is updated from CONF to LAB" in new WithApplication(app = appWithTestRedis()) {
 
       // WARN : flush the DB, but on Database = 1
       Redis.pool.withClient {
@@ -104,9 +118,9 @@ class ApprovedProposalSpecs extends PlaySpecification {
 
       // GIVEN
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2", None, Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.BOF.id,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("test", proposal, ProposalState.SUBMITTED)
@@ -118,7 +132,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
 
       // THEN
       ApprovedProposal.countRefused("all") mustEqual 1
-      ApprovedProposal.countRefused(ConferenceDescriptor.ConferenceProposalTypes.BOF.id) mustEqual 0
+      ApprovedProposal.countRefused(ConferenceDescriptor.ConferenceProposalTypes.CONF.id) mustEqual 0
       ApprovedProposal.countRefused(ConferenceDescriptor.ConferenceProposalTypes.LAB.id) mustEqual 1
     }
 
@@ -132,9 +146,9 @@ class ApprovedProposalSpecs extends PlaySpecification {
 
       // GIVEN
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2", None, Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.BOF.id,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("test", proposal, ProposalState.SUBMITTED)
@@ -146,7 +160,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
 
       // THEN
       ApprovedProposal.countApproved("all") mustEqual 0
-      ApprovedProposal.countApproved(ConferenceDescriptor.ConferenceProposalTypes.BOF.id) mustEqual 0
+      ApprovedProposal.countApproved(ConferenceDescriptor.ConferenceProposalTypes.CONF.id) mustEqual 0
     }
 
     "decrease total refused when a refused proposal is deleted" in new WithApplication(app = appWithTestRedis()) {
@@ -161,7 +175,7 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2", None, Nil,
         ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("test", proposal, ProposalState.SUBMITTED)
@@ -188,9 +202,9 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2",
         None,
         Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.BOF.id,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
@@ -216,9 +230,9 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2",
         Some("secondarySpeaker"),
         Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.BOF.id,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
@@ -244,9 +258,9 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2",
         None,
         List("someOtherSpeaker"),
-        ConferenceDescriptor.ConferenceProposalTypes.BOF.id,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
@@ -271,9 +285,9 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2",
         None,
         Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.BOF.id,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
@@ -301,9 +315,9 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2",
         Some("secondarySpeaker"),
         Nil,
-        ConferenceDescriptor.ConferenceProposalTypes.BOF.id,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)
@@ -331,9 +345,9 @@ class ApprovedProposalSpecs extends PlaySpecification {
       val proposal = Proposal.validateNewProposal(None, "fr", "test proposal 2",
         Some("secondarySpeaker"),
         List("firstThirdSpeaker"),
-        ConferenceDescriptor.ConferenceProposalTypes.BOF.id,
+        ConferenceDescriptor.ConferenceProposalTypes.CONF.id,
         "audience level", "summary 2", "private message 2", sponsorTalk = false,
-        ConferenceDescriptor.ConferenceTracks.JAVA.id, Some("beginner"),
+        Track.parse("java").id, Some("beginner"),
         userGroup = None)
 
       Proposal.save("speaker1", proposal, ProposalState.SUBMITTED)

@@ -26,6 +26,7 @@ package models
 import play.api.test.{WithApplication, FakeApplication, PlaySpecification}
 import org.apache.commons.lang3.RandomStringUtils
 
+import scala.collection.JavaConverters._
 
 /**
  * Simple Spec2 test for TrackLeader
@@ -34,12 +35,30 @@ import org.apache.commons.lang3.RandomStringUtils
 class TrackLeaderSpecs extends PlaySpecification {
 
   val testRedis = Map("redis.host" -> "localhost", "redis.port" -> "6363", "redis.activeDatabase" -> 1)
-
-  val sampleTrack = ConferenceDescriptor.ConferenceTracks
+  val testTracks = Map(
+    "cfp.tracks" -> Seq(
+      Map(
+        "id" -> "java"
+        , "icon" -> ""
+      ).asJava
+      , Map(
+        "id" -> "web mobile"
+        , "icon" -> ""
+      ).asJava
+      , Map(
+        "id" -> "archisec"
+        , "icon" -> ""
+      ).asJava
+      , Map(
+        "id" -> "agility tests"
+        , "icon" -> ""
+      ).asJava
+    ).asJava
+  )
 
   // To avoid Play Cache Exception during tests, check this
   // https://groups.google.com/forum/#!topic/play-framework/PBIfeiwl5rU
-  val appWithTestRedis = () => FakeApplication(additionalConfiguration = testRedis)
+  val appWithTestRedis = () => FakeApplication(additionalConfiguration = testRedis ++ testTracks)
 
 
   "TrackLeader" should {
@@ -54,16 +73,16 @@ class TrackLeaderSpecs extends PlaySpecification {
       Webuser.addToCFPAdmin(testWebuser.uuid)
 
       // When
-      TrackLeader.assign(sampleTrack.WEB_MOBILE.id, testWebuser.uuid)
+      TrackLeader.assign(Track.parse("web mobile").id, testWebuser.uuid)
 
       // Then the webuser is assigned to the Track
-      TrackLeader.isTrackLeader(sampleTrack.WEB_MOBILE.id, testWebuser.uuid) must beTrue
-      TrackLeader.isTrackLeader(sampleTrack.JAVA.id, testWebuser.uuid) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("web mobile").id, testWebuser.uuid) must beTrue
+      TrackLeader.isTrackLeader(Track.parse("java").id, testWebuser.uuid) must beFalse
 
 
       Webuser.delete(testWebuser)
       // Check that we did a cleanup
-      TrackLeader.isTrackLeader(sampleTrack.WEB_MOBILE.id, testWebuser.uuid) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("web mobile").id, testWebuser.uuid) must beFalse
     }
 
     "not associate a user to a Track if the user does not belong to CFP group" in new WithApplication(app = appWithTestRedis()) {
@@ -75,10 +94,10 @@ class TrackLeaderSpecs extends PlaySpecification {
 
 
       // When
-      TrackLeader.assign(sampleTrack.WEB_MOBILE.id, testWebuser.uuid)
+      TrackLeader.assign(Track.parse("web mobile").id, testWebuser.uuid)
 
       // Then the webuser is NOT assigned to the Track
-      TrackLeader.isTrackLeader(sampleTrack.JAVA.id, testWebuser.uuid) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("java").id, testWebuser.uuid) must beFalse
 
       Webuser.delete(testWebuser)
     }
@@ -92,11 +111,11 @@ class TrackLeaderSpecs extends PlaySpecification {
 
       // When
       Webuser.addToCFPAdmin(testWebuser.uuid)
-      TrackLeader.assign(sampleTrack.ARCHISEC.id, testWebuser.uuid)
-      TrackLeader.unassign(sampleTrack.ARCHISEC.id, testWebuser.uuid)
+      TrackLeader.assign(Track.parse("archisec").id, testWebuser.uuid)
+      TrackLeader.unassign(Track.parse("archisec").id, testWebuser.uuid)
 
       // Then
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, testWebuser.uuid) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, testWebuser.uuid) must beFalse
 
       Webuser.delete(testWebuser)
     }
@@ -109,12 +128,12 @@ class TrackLeaderSpecs extends PlaySpecification {
       Webuser.saveAndValidateWebuser(testWebuser)
 
       // When
-      TrackLeader.assign(sampleTrack.ARCHISEC.id, testWebuser.uuid)
-      TrackLeader.unassign(sampleTrack.ARCHISEC.id, testWebuser.uuid)
+      TrackLeader.assign(Track.parse("archisec").id, testWebuser.uuid)
+      TrackLeader.unassign(Track.parse("archisec").id, testWebuser.uuid)
 
 
       // Then
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, testWebuser.uuid) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, testWebuser.uuid) must beFalse
 
       Webuser.delete(testWebuser)
     }
@@ -127,14 +146,14 @@ class TrackLeaderSpecs extends PlaySpecification {
 
       // When
       Webuser.addToCFPAdmin(testWebuser.uuid)
-      TrackLeader.assign(sampleTrack.ARCHISEC.id, testWebuser.uuid)
-      TrackLeader.assign(sampleTrack.JAVA.id, testWebuser.uuid)
+      TrackLeader.assign(Track.parse("archisec").id, testWebuser.uuid)
+      TrackLeader.assign(Track.parse("java").id, testWebuser.uuid)
 
 
       // Then
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, testWebuser.uuid) must beTrue
-      TrackLeader.isTrackLeader(sampleTrack.AGILITY_TESTS.id, testWebuser.uuid) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.JAVA.id, testWebuser.uuid) must beTrue
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, testWebuser.uuid) must beTrue
+      TrackLeader.isTrackLeader(Track.parse("agility tests").id, testWebuser.uuid) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("java").id, testWebuser.uuid) must beTrue
 
       Webuser.delete(testWebuser)
     }
@@ -145,16 +164,16 @@ class TrackLeaderSpecs extends PlaySpecification {
       val testWebuser = Webuser.createSpeaker(email, RandomStringUtils.randomAlphabetic(2), RandomStringUtils.randomAlphabetic(4))
       Webuser.saveAndValidateWebuser(testWebuser)
       Webuser.addToCFPAdmin(testWebuser.uuid)
-      val mapsByTrack:Map[String,Seq[String]] = Map(sampleTrack.ARCHISEC.id -> List(testWebuser.uuid).toSeq)
+      val mapsByTrack:Map[String,Seq[String]] = Map(Track.parse("archisec").id -> List(testWebuser.uuid).toSeq)
 
       // When
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, testWebuser.uuid) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, testWebuser.uuid) must beFalse
       TrackLeader.updateAllTracks(mapsByTrack)
 
       // Then
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, testWebuser.uuid) must beTrue
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id,  RandomStringUtils.randomAlphabetic(9)) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.AGILITY_TESTS.id, testWebuser.uuid) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, testWebuser.uuid) must beTrue
+      TrackLeader.isTrackLeader(Track.parse("archisec").id,  RandomStringUtils.randomAlphabetic(9)) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("agility tests").id, testWebuser.uuid) must beFalse
 
       Webuser.delete(testWebuser)
     }
@@ -165,18 +184,18 @@ class TrackLeaderSpecs extends PlaySpecification {
       val testWebuser = Webuser.createSpeaker(email, RandomStringUtils.randomAlphabetic(2), RandomStringUtils.randomAlphabetic(4))
       Webuser.saveAndValidateWebuser(testWebuser)
       Webuser.addToCFPAdmin(testWebuser.uuid)
-      val mapsByTrack:Map[String,Seq[String]] = Map(sampleTrack.ARCHISEC.id -> List(testWebuser.uuid).toSeq)
+      val mapsByTrack:Map[String,Seq[String]] = Map(Track.parse("archisec").id -> List(testWebuser.uuid).toSeq)
 
       // When
       TrackLeader.updateAllTracks(mapsByTrack)
 
       // Then
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, testWebuser.uuid) must beTrue
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, testWebuser.uuid) must beTrue
 
-      val mapsByTrack02:Map[String,Seq[String]] = Map(sampleTrack.ARCHISEC.id -> List(RandomStringUtils.randomAlphabetic(3)).toSeq)
+      val mapsByTrack02:Map[String,Seq[String]] = Map(Track.parse("archisec").id -> List(RandomStringUtils.randomAlphabetic(3)).toSeq)
       TrackLeader.updateAllTracks(mapsByTrack02)
 
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id,  testWebuser.uuid) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("archisec").id,  testWebuser.uuid) must beFalse
 
       Webuser.delete(testWebuser)
     }
@@ -193,45 +212,45 @@ class TrackLeaderSpecs extends PlaySpecification {
       Webuser.addToCFPAdmin(uuid03)
 
       val mapsByTrack:Map[String,Seq[String]] = Map(
-        sampleTrack.WEB_MOBILE.id -> List(uuid01).toSeq,
-        sampleTrack.JAVA.id -> List(uuid02).toSeq,
-        sampleTrack.ARCHISEC.id -> List(uuid01).toSeq
+        Track.parse("web mobile").id -> List(uuid01).toSeq,
+        Track.parse("java").id -> List(uuid02).toSeq,
+        Track.parse("archisec").id -> List(uuid01).toSeq
       )
 
       // When
       TrackLeader.updateAllTracks(mapsByTrack)
 
       // Then
-      TrackLeader.isTrackLeader(sampleTrack.WEB_MOBILE.id, uuid01) must beTrue
-      TrackLeader.isTrackLeader(sampleTrack.JAVA.id, uuid01) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, uuid01) must beTrue
+      TrackLeader.isTrackLeader(Track.parse("web mobile").id, uuid01) must beTrue
+      TrackLeader.isTrackLeader(Track.parse("java").id, uuid01) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, uuid01) must beTrue
 
-      TrackLeader.isTrackLeader(sampleTrack.WEB_MOBILE.id, uuid02) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.JAVA.id, uuid02) must beTrue
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, uuid02) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("web mobile").id, uuid02) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("java").id, uuid02) must beTrue
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, uuid02) must beFalse
 
-      TrackLeader.isTrackLeader(sampleTrack.WEB_MOBILE.id, uuid03) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.JAVA.id, uuid03) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, uuid03) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("web mobile").id, uuid03) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("java").id, uuid03) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, uuid03) must beFalse
 
        val mapsByTrack2:Map[String,Seq[String]] = Map(
-        sampleTrack.WEB_MOBILE.id -> List(uuid03).toSeq,
-        sampleTrack.JAVA.id -> List(uuid03).toSeq
+         Track.parse("web mobile").id -> List(uuid03).toSeq,
+         Track.parse("java").id -> List(uuid03).toSeq
       )
       TrackLeader.updateAllTracks(mapsByTrack2)
 
-      TrackLeader.isTrackLeader(sampleTrack.WEB_MOBILE.id, uuid01) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.JAVA.id, uuid01) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, uuid01) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("web mobile").id, uuid01) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("java").id, uuid01) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, uuid01) must beFalse
 
-      TrackLeader.isTrackLeader(sampleTrack.WEB_MOBILE.id, uuid02) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.JAVA.id, uuid02) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, uuid02) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("web mobile").id, uuid02) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("java").id, uuid02) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, uuid02) must beFalse
 
-      TrackLeader.isTrackLeader(sampleTrack.WEB_MOBILE.id, uuid03) must beTrue
-      TrackLeader.isTrackLeader(sampleTrack.JAVA.id, uuid03) must beTrue
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, uuid01) must beFalse
-      TrackLeader.isTrackLeader(sampleTrack.ARCHISEC.id, uuid03) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("web mobile").id, uuid03) must beTrue
+      TrackLeader.isTrackLeader(Track.parse("java").id, uuid03) must beTrue
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, uuid01) must beFalse
+      TrackLeader.isTrackLeader(Track.parse("archisec").id, uuid03) must beFalse
 
       Webuser.removeFromCFPAdmin(uuid01)
       Webuser.removeFromCFPAdmin(uuid02)

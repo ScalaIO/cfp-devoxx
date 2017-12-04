@@ -24,10 +24,11 @@
 package models
 
 import library.Redis
+import models.Review._
 import org.apache.commons.lang3.RandomStringUtils
 import org.joda.time.DateTime
 import org.specs2.control.Debug
-import play.api.test.{FakeApplication, WithApplication, PlaySpecification}
+import play.api.test.{FakeApplication, PlaySpecification, WithApplication}
 
 /**
  * Review test for LUA.
@@ -36,7 +37,7 @@ import play.api.test.{FakeApplication, WithApplication, PlaySpecification}
 class ReviewSpecs extends PlaySpecification with Debug {
 
   // Use a different Redis Database than the PROD one
-  val testRedis = Map("redis.host" -> "localhost", "redis.port" -> "6364", "redis.activeDatabase" -> 1)
+  val testRedis = Map("redis.host" -> "localhost", "redis.port" -> "6363", "redis.activeDatabase" -> 1)
 
   // To avoid Play Cache Exception during tests, check this
   // https://groups.google.com/forum/#!topic/play-framework/PBIfeiwl5rU
@@ -307,18 +308,13 @@ class ReviewSpecs extends PlaySpecification with Debug {
 
       checkedProposal mustEqual(proposalId)
 
-      val score = scoreAndTotalVotes._1
-      val voters = scoreAndTotalVotes._2
-      val abstentions = scoreAndTotalVotes._3
-      val average = scoreAndTotalVotes._4
-      val standardDev = scoreAndTotalVotes._5
-
-      score mustEqual 15
-      average mustEqual 7.5
-      voters mustEqual 2
-      abstentions mustEqual 1
-      standardDev mustEqual 3.536
-
+      scoreAndTotalVotes mustEqual((
+        new Score(15),
+        new TotalVoter(2),
+        new TotalAbst(1),
+        new AverageNote(7.5),
+        new StandardDev(3.536)
+      ))
     }
 
   "should load the LUA script and not crash if a proposal has no votes"  in new WithApplication(app = appWithTestRedis()) {
@@ -402,18 +398,13 @@ class ReviewSpecs extends PlaySpecification with Debug {
 
       checkedProposal mustEqual(proposalId)
 
-      val score = scoreAndTotalVotes._1
-      val voters = scoreAndTotalVotes._2
-      val abstentions = scoreAndTotalVotes._3
-      val average = scoreAndTotalVotes._4
-      val standardDev = scoreAndTotalVotes._5
-
-      score mustEqual 0
-      average mustEqual 0
-      voters mustEqual 0
-      abstentions mustEqual 2
-      standardDev mustEqual 0
-
+      scoreAndTotalVotes mustEqual((
+        new Score(0),
+        new TotalVoter(0),
+        new TotalAbst(2),
+        new AverageNote(0),
+        new StandardDev(0)
+      ))
     }
 
   }
