@@ -45,7 +45,7 @@ case class Room(id: String, name: String, capacity: Int, setup: String, recorded
   }
 
   def compare(that: Room): Int = {
-    // TODO a virer apres Devoxx FR 2017
+    // TODO a virer apres Devoxx FR 2018
     // Hack for Devoxx France => I cannot change the Room IDs so I fix the order in an IndexedSeq here
     if(Room.fixedOrderForRoom.indexOf(this.id) < Room.fixedOrderForRoom.indexOf(that.id)){
       return -1
@@ -68,7 +68,7 @@ object Room {
     ConferenceDescriptor.ConferenceRooms.allRooms.find(r => r.id == roomId).getOrElse(OTHER)
   }
 
-  // TODO à virer apres Devoxx FR 2017
+  // TODO à virer apres Devoxx FR 2018
   val fixedOrderForRoom = IndexedSeq("a_hall",
     "b_amphi",
     "c_maillot",
